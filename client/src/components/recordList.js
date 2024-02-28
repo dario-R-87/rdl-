@@ -16,6 +16,7 @@ const Record = (props) => (
 export default function RecordList() {
  const [records, setRecords] = useState([]);
  const [added, setAdded] = useState(false);
+ const [row, setRow] = useState(0)
   // This method fetches the records from the database.
  useEffect(() => {
    async function getRecords() {
@@ -75,8 +76,8 @@ location.reload();*/
     //   rownum:3
     // };
     const record = {
-      serial:'1234567893',
-      tipdoc:'TEST1',
+      serial:'00000000'+row,
+      tipdoc:'TES'+row,
       datadoc:'2021-11-02',
       codart:'00024497',
       unimis:'n.',
@@ -84,7 +85,7 @@ location.reload();*/
       codmat:'TRASF00003',
       magpar:'1026',
       insuser:'690a10eb6bd3636a',
-      rownum:3
+      rownum: row
     };
     try {
       await fetch("http://localhost:5000/record/add", {
@@ -95,6 +96,7 @@ location.reload();*/
         body: JSON.stringify(record),
       });
       setAdded(!added)
+      setRow(row+1)
     } catch (error) {
       console.error("Errore nella richiesta post:", error);
       window.alert(error);
