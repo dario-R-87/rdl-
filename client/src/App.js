@@ -6,12 +6,16 @@ import Navbar from "./components/navbar";
 import RecordList from "./components/recordList";
 import Edit from "./components/edit";
 import Create from "./components/create";
+import Main from "./components/main/Main"
+import CreateDocument from "./components/document/CreateDocument";
+
  const App = () => {
  return (
    <div>
      <Navbar />
      <Routes>
-       <Route exact path="/" element={<RecordList />} />
+       <Route exact path="/" element={<Main />} />
+       <Route path="/nuovo" element={<CreateDocument />}/>
        <Route path="/edit/:id" element={<Edit />} />
        <Route path="/create" element={<Create />} />
      </Routes>
