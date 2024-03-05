@@ -38,6 +38,17 @@ recordRoutes.route("/record").get(function (req, res) {
     });
 });
 
+recordRoutes.route("/new_serial").get(function (req, res) {
+  db.query("SELECT MAX(SERIAL) AS MAX_SERIAL FROM dbo.HRI__ZUAPPAHR")
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 // This section will help you create a new record.
 recordRoutes.route("/record/add").post(function (req, res) {
   const {

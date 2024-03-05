@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Button, Container, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import RowsList from './RowsList';
 
 const CreateDocument = () => {
 
@@ -25,6 +26,28 @@ const CreateDocument = () => {
     const [rows, setRows] = useState([]);
 
     const [isTestataSave, setIsTestataSave] = useState(false)
+
+    const [newSerial, setNewSerial] = useState('0000000001')
+
+    useEffect(() => {
+        async function getMaxSerial() {
+            const response = await fetch("http://localhost:5000/new_serial");
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            const json = await response.json();
+            if(json[0].MAX_SERIAL){
+                const max_serial = parseInt(json[0].MAX_SERIAL, 10);
+                const newSerial = max_serial + 1;
+                const newSerialString = String(newSerial).padStart(10, '0');
+                setNewSerial(newSerialString);
+            }
+        }
+        getMaxSerial();
+        return;
+    }, [isTestataSave])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -61,7 +84,8 @@ const CreateDocument = () => {
             codmat: ''
         });
         setIsTestataSave(false)
-        alert("documento creato!");
+        setRows([]);
+        alert("Documento Creato!");
     };
 
     const salvaTestata = () => {
@@ -76,7 +100,7 @@ const CreateDocument = () => {
         e.preventDefault();
         const newRecord = {
             ...formData,
-            serial: '0000000010',
+            serial: newSerial,
             magpar: '1026',
             insuser: '690a10eb6bd3636a',
             rownum: (rows.length + 1) * 10
@@ -88,6 +112,9 @@ const CreateDocument = () => {
             quanti: 1,
             codmat: ''
         });
+        alert("Riga Aggiunta")
+        if (rows.length === 0)
+            setIsTestataSave(true)
     }
 
     return (
@@ -142,6 +169,8 @@ const CreateDocument = () => {
                     Salva Documento
                 </Button>
             </Form>
+            <RowsList rows={rows} />
+            <div>max serial: {newSerial}</div>
         </Container>
     );
 
