@@ -1,11 +1,11 @@
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
+import {Button} from 'react-bootstrap';
 import { Link } from "react-router-dom";
 
 const Main = () => {
     return (
-        <Container className='mt-3'>
-            <Link to="/nuovo"><button>Nuovo Documento</button></Link>
+        <Container className='mt-5 d-flex justify-content-center'>
+            <Link to="/nuovo"><Button>Nuovo Documento</Button></Link>
         </Container>
     );
 }

@@ -31,7 +31,7 @@ const CreateDocument = () => {
 
     useEffect(() => {
         async function getMaxSerial() {
-            const response = await fetch("http://localhost:5000/new_serial");
+            const response = await fetch("http://192.168.1.29:5000/new_serial");
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -60,32 +60,41 @@ const CreateDocument = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Qui puoi gestire l'invio dei dati, ad esempio inviandoli al server
-        rows.forEach(async (row) => {
-            try {
-                await fetch("http://localhost:5000/record/add", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(row),
-                });
-            } catch (error) {
-                console.error("Errore nella richiesta post:", error);
-                window.alert(error);
-                return;
-            };
-        });
-        setFormData({
-            tipdoc: 'INVEN',
-            datadoc: getCurrentDate(),
-            codart: '',
-            unimis: 'n.',
-            quanti: 1,
-            codmat: ''
-        });
-        setIsTestataSave(false)
-        setRows([]);
-        alert("Documento Creato!");
+        if(rows.length===0)
+            alert("Nessura riga inserita");
+        else {
+            rows.forEach(async (row) => {
+                try {
+                    const response = await fetch("http://192.168.1.29:5000/record/add", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(row),
+                    });
+                    if (!response.ok) {
+                        const message = `An error occurred: ${response.statusText}`;
+                        window.alert(message);
+                        return;
+                    }
+                    setFormData({
+                        tipdoc: 'INVEN',
+                        datadoc: getCurrentDate(),
+                        codart: '',
+                        unimis: 'n.',
+                        quanti: 1,
+                        codmat: ''
+                    });
+                    setIsTestataSave(false)
+                    setRows([]);
+                    alert("Documento Creato!");
+                } catch (error) {
+                    console.error("Errore nella richiesta post:", error);
+                    window.alert(error);
+                    return;
+                };
+            });
+        }
     };
 
     const salvaTestata = () => {
@@ -170,7 +179,6 @@ const CreateDocument = () => {
                 </Button>
             </Form>
             <RowsList rows={rows} />
-            <div>max serial: {newSerial}</div>
         </Container>
     );
 
