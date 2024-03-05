@@ -3,6 +3,8 @@ import { Form, Button, Container, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import RowsList from './RowsList';
+import { Link } from "react-router-dom";
+
 
 const CreateDocument = () => {
 
@@ -38,7 +40,7 @@ const CreateDocument = () => {
                 return;
             }
             const json = await response.json();
-            if(json[0].MAX_SERIAL){
+            if (json[0].MAX_SERIAL) {
                 const max_serial = parseInt(json[0].MAX_SERIAL, 10);
                 const newSerial = max_serial + 1;
                 const newSerialString = String(newSerial).padStart(10, '0');
@@ -60,7 +62,7 @@ const CreateDocument = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Qui puoi gestire l'invio dei dati, ad esempio inviandoli al server
-        if(rows.length===0)
+        if (rows.length === 0)
             alert("Nessura riga inserita");
         else {
             rows.forEach(async (row) => {
@@ -128,7 +130,10 @@ const CreateDocument = () => {
 
     return (
         <Container className='mt-3'>
-            <h2>Nuovo Documento</h2>
+            <div className='d-flex justify-content-between'>
+                <h2>Nuovo Documento</h2>
+                <Link to="/"><Button variant='secondary'>Home</Button></Link>
+            </div>
             <Form onSubmit={addRowHandler}>
                 <Form.Group controlId="tipdoc">
                     <Form.Label>Tipo Documento</Form.Label>
@@ -142,7 +147,7 @@ const CreateDocument = () => {
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled={isTestataSave} />
                 </Form.Group>
                 {!isTestataSave && <div>
-                    <Button className="mt-3" variant="primary" onClick={salvaTestata}>
+                    <Button className="mt-3" variant="success" onClick={salvaTestata}>
                         Conferma Testata
                     </Button>
                 </div>}
@@ -161,7 +166,7 @@ const CreateDocument = () => {
 
                 <Form.Group controlId="quanti">
                     <Form.Label>Quantità</Form.Label>
-                    <Form.Control required type="number" step="1" name="quanti" value={formData.quanti} onChange={handleChange} />
+                    <Form.Control required type="number" name="quanti" value={formData.quanti} onChange={handleChange} />
                 </Form.Group>
 
                 <Form.Group controlId="codmat">
@@ -169,16 +174,16 @@ const CreateDocument = () => {
                     <Form.Control required type="text" name="codmat" value={formData.codmat} onChange={handleChange} />
                 </Form.Group>
 
-                <div>
+                <div className='d-flex justify-content-between'>
                     <Button className="mt-3" variant="primary" type="submit">
                         Aggiungi Riga
                     </Button>
+                    <Button onClick={handleSubmit} className="mt-3" variant="warning" type="">
+                        Salva Documento
+                    </Button>
                 </div>
-                <Button onClick={handleSubmit} className="mt-3" variant="primary" type="">
-                    Salva Documento
-                </Button>
-            </Form>
             <RowsList rows={rows} />
+            </Form>
         </Container>
     );
 
