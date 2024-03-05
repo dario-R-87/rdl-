@@ -52,10 +52,7 @@ recordRoutes.route("/record/add").post(function (req, res) {
     insuser,
     rownum
   } = req.body; // Assumendo che il body della richiesta contenga i dati per il nuovo record
-// console.log(serial+" "+tipdoc+" "+datadoc+" "+codart+" "+unimis+" "+quanti+" "+codmat+" "+magpar+" "+insuser+" "+rownum)
-  // Esegui la query per aggiungere il nuovo record al database
-  // db.query(`INSERT INTO dbo.HRI__ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, INSUSER, ROWNUM) VALUES
-  //  (${serial},${tipdoc},${datadoc},${codart},${unimis},${quanti},${codmat},${magpar},${insuser},${rownum})`)
+
   db.query(`INSERT INTO dbo.HRI__ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, INSUSER, ROWNUM) VALUES
   ('${serial}', '${tipdoc}', '${datadoc}', '${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${insuser}', ${rownum})`)
     .then(result => {
