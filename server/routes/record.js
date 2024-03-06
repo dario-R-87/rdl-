@@ -27,6 +27,17 @@ const db = require("../db/conn");
 //     });
 // });
 
+recordRoutes.route("/articoli").get(function (req, res) {
+  db.query("SELECT CACODICE, CADESART, CADESSUP FROM dbo.HRI__KEY_ARTI")
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 recordRoutes.route("/record").get(function (req, res) {
   db.query("SELECT * FROM dbo.HRI__ZUAPPAHR")
     .then(result => {

@@ -13,9 +13,12 @@ const RowsList = ({ rows, handleDelete, handleUpdate }) => {
                     <Card.Body>
                         <div className="d-flex justify-content-between align-items-center">
                             <div>
-                                <Card.Title>{row.codart}</Card.Title>
+                                <Card.Text>Art: <strong>{row.codart}</strong></Card.Text>
                                 <Card.Text>
-                                    <strong>{row.unimis}</strong> {row.quanti}
+                                    {row.unimis}: <strong>{row.quanti}</strong>
+                                </Card.Text>
+                                <Card.Text>
+                                    Mat.: <strong>{row.codmat}</strong>
                                 </Card.Text>
                             </div>
                             <div className="d-flex flex-column align-items-start gap-1">

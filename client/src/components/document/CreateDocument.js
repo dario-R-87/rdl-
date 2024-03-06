@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Container, InputGroup } from 'react-bootstrap';
+import { Form, Button, Container } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import RowsList from './RowsList';
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import Articoli from '../articoli/Articoli';
 
 
 const CreateDocument = () => {
@@ -31,6 +32,7 @@ const CreateDocument = () => {
     const [isTestataSave, setIsTestataSave] = useState(false)
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
     const [newSerial, setNewSerial] = useState('0000000001')
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         async function getMaxSerial() {
@@ -145,7 +147,11 @@ const CreateDocument = () => {
     }
 
     const artHandler = () => {
+        setShow(!show)
+    }
 
+    const onArtSelect = (selected) => {
+        setFormData({...formData, codart: selected.CACODICE})
     }
 
     const addRowHandler = (e) => {
@@ -248,6 +254,8 @@ const CreateDocument = () => {
                     <Form.Label>Codice Articolo</Form.Label>
                     <div className='d-flex'><Form.Control required type="text" name="codart" value={formData.codart} onChange={handleChange} />
                         <Button onClick={artHandler}><FontAwesomeIcon icon={faSearch} /></Button></div>
+                    {/* <ArtModal show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect}></ArtModal> */}
+                    {show && <Articoli show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect}></Articoli>}
                 </Form.Group>
 
                 <Form.Group controlId="unimis">
