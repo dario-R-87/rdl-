@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Card, Button } from 'react-bootstrap';
+import {  Card, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare,faTrash } from '@fortawesome/free-solid-svg-icons';
 
@@ -13,13 +13,13 @@ const RowsList = ({ rows, handleDelete, handleUpdate }) => {
                     <Card.Body>
                         <div className="d-flex justify-content-between align-items-center">
                             <div>
-                                <Card.Text>Art: <strong>{row.codart}</strong></Card.Text>
+                                <Card.Text>Art: <strong>{row.desc}</strong></Card.Text>
                                 <Card.Text>
                                     {row.unimis}: <strong>{row.quanti}</strong>
                                 </Card.Text>
-                                <Card.Text>
+                                {false &&<Card.Text>
                                     Mat.: <strong>{row.codmat}</strong>
-                                </Card.Text>
+                                </Card.Text>}
                             </div>
                             <div className="d-flex flex-column align-items-start gap-1">
                                 <Button variant="primary" onClick={()=>handleUpdate(row.rownum)}><FontAwesomeIcon icon={faPenToSquare} /></Button>

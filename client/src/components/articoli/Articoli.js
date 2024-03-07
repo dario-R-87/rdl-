@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Card } from 'react-bootstrap';
 import LoadSpinner from "../loading/LoadSpinner"
 
-const Articoli = ({ show, handleClose, handleArticoloSelect }) => {
+const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
     const [articoli, setArticoli] = useState([]);
     const [loading, setLoading] = useState(false);
 
     // This method fetches the records from the database.
     const getArticoli = async () => {
-        try {
+        try {console.log("eseguo fetch")
             setLoading(true);
             const response = await fetch("http://localhost:5000/articoli");
             if (!response.ok) {
@@ -16,7 +16,12 @@ const Articoli = ({ show, handleClose, handleArticoloSelect }) => {
                 window.alert(message);
                 return;
             }
-            const records = await response.json();
+            let records = await response.json();
+            if(searchValue.length>4){
+                records = records.filter((item) => {
+                    return item.CADESART.toLowerCase().includes(searchValue.toLowerCase())
+                });
+            }
             setArticoli(records);
             setLoading(false);
         } catch (error) {
