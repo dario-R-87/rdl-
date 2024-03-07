@@ -126,9 +126,24 @@ const CreateDocument = () => {
         })
         setCurrentArt(selected)
     }
-
+    
+    const resetByUpdate = () => {
+        setFormData({
+            ...formData,
+            quanti: 1,
+            codmat: 'NULL',
+            codart: '',
+            desc: '',
+            search: '',
+        });
+        setUpdate({ ...update, updating: false, rownum: 0 })
+    }
     const addRowHandler = (e) => {
         e.preventDefault();
+        if(formData.codart===''){
+            alert('Inserisci Articolo')
+            return
+        }
         const newRecord = {
             ...formData,
             serial: newSerial,
@@ -138,16 +153,17 @@ const CreateDocument = () => {
         }
         setRows(prevRows => [...prevRows, newRecord]);
         // Resetta il formData
-        setFormData({
-            ...formData,
-            quanti: 1,
-            codmat: 'NULL',
-        });
+        // setFormData({
+        //     ...formData,
+        //     quanti: 1,
+        //     codmat: 'NULL',
+        // });
         alert("Riga Aggiunta")
+        resetByUpdate();
         if (rows.length === 0)
             setIsTestataSave(true)
     }
-
+    
     const onDelete = (rownum) => {
         // Filtra gli elementi escludendo quello con rownum uguale a rownumToDelete
         const updatedRows = rows.filter(row => row.rownum !== rownum);
@@ -167,17 +183,6 @@ const CreateDocument = () => {
             codart: rowByUpdate.codart,
             desc: rowByUpdate.desc
         })
-    }
-
-    const resetByUpdate = () => {
-        setFormData({
-            ...formData,
-            quanti: 1,
-            codmat: 'NULL',
-            codart: '',
-            desc: '',
-        });
-        setUpdate({ ...update, updating: false, rownum: 0 })
     }
 
     const updateRow = () => {

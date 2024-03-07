@@ -18,7 +18,10 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
         // console.log("filter art "+filterValue);
         // console.log(articoli)
         const arts = articoli.filter((item) => {
-            return item.CADESART.toLowerCase().includes(filterValue.toLowerCase())
+            return (
+                item.CADESART.toLowerCase().includes(filterValue.toLowerCase()) ||
+                item.CACODART.includes(filterValue)
+            )
         });
         setArtsFiltered(arts);
     }
@@ -32,7 +35,7 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
     const getArticoli = async () => {
         try {
             setLoading(true);
-            const response = await fetch("http://localhost:5000/articoli");
+            const response = await fetch("http://192.168.1.29:5000/articoli");
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -41,7 +44,9 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
             let records = await response.json();
             if (filterValue.length > 0) {
                 const filteredRecords = records.filter((item) => {
-                    return item.CADESART.toLowerCase().includes(filterValue.toLowerCase())
+                    return (
+                        item.CADESART.toLowerCase().includes(filterValue.toLowerCase()) ||
+                        item.CACODART.includes(filterValue))
                 });
                 setArtsFiltered(filteredRecords)
             }
@@ -54,6 +59,10 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
 
     useEffect(() => {
         getArticoli();
+        // console.log(filterValue)
+        // setFilterValue(searchValue)
+        // // filterArt();
+        // console.log(artsFiltered)
     }, []);
 
     const selectArticolo = (codart) => {
@@ -78,16 +87,11 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                                 <Form.Control placeholder="Cerca..." type="text" name="search" value={filterValue} onChange={handleChange} />
                             </div>
                         </Form.Group>
-                        {/* <div className='d-flex justify-content-between'>
-                            {!update.updating && <Button className="mt-3" variant="primary" type="submit">
-                                Aggiungi Riga
-                            </Button>}
-                        </div> */}
                     </Form>}
                 {!loading && artsFiltered.length>0 && artsFiltered.map((articolo) => (
                     <Card className="mt-2" key={articolo.CACODICE} onClick={() => selectArticolo(articolo.CACODART)} style={{ cursor: 'pointer' }}>
                         <Card.Body>
-                            <Card.Title>{articolo.CACODICE}</Card.Title>
+                            <Card.Title>{articolo.CACODART}</Card.Title>
                             <Card.Text>{articolo.CADESART + articolo.CADESSUP}</Card.Text>
                         </Card.Body>
                     </Card>
@@ -95,7 +99,7 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                 {!loading && artsFiltered.length===0 && articoli.map((articolo) => (
                     <Card className="mt-2" key={articolo.CACODICE} onClick={() => selectArticolo(articolo.CACODART)} style={{ cursor: 'pointer' }}>
                         <Card.Body>
-                            <Card.Title>{articolo.CACODICE}</Card.Title>
+                            <Card.Title>{articolo.CACODART}</Card.Title>
                             <Card.Text>{articolo.CADESART + articolo.CADESSUP}</Card.Text>
                         </Card.Body>
                     </Card>
