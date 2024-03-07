@@ -29,7 +29,7 @@ const Articoli = ({ show, handleClose, handleArticoloSelect }) => {
     }, []);
 
     const selectArticolo = (codart) => {
-        const artSelected = articoli.find(art => art.CACODICE === codart);
+        const artSelected = articoli.find(art => art.CACODART === codart);
         handleArticoloSelect(artSelected);
         handleClose();
     };
@@ -43,7 +43,7 @@ const Articoli = ({ show, handleClose, handleArticoloSelect }) => {
             <Modal.Body className="row justify-content-center mx-3">
                 {loading && <LoadSpinner />}
                 {!loading && articoli.map((articolo) => (
-                    <Card className="mt-2" key={articolo.CACODICE} onClick={() => selectArticolo(articolo.CACODICE)} style={{ cursor: 'pointer' }}>
+                    <Card className="mt-2" key={articolo.CACODICE} onClick={() => selectArticolo(articolo.CACODART)} style={{ cursor: 'pointer' }}>
                         <Card.Body>
                             <Card.Title>{articolo.CACODICE}</Card.Title>
                             <Card.Text>{articolo.CADESART + articolo.CADESSUP}</Card.Text>
