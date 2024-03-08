@@ -17,12 +17,17 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
     const filterArt = () => {
         // console.log("filter art "+filterValue);
         // console.log(articoli)
-        const arts = articoli.filter((item) => {
-            return (
-                item.CADESART.toLowerCase().includes(filterValue.toLowerCase()) ||
-                item.CACODART.includes(filterValue)
-            )
-        });
+        let arts=[];
+        if(filterValue!==''){
+            arts = articoli.filter((item) => {
+                return (
+                    item.CADESART.toLowerCase().includes(filterValue.toLowerCase()) ||
+                    item.CACODART.includes(filterValue)
+                )
+                });
+        } else {
+            arts=articoli;
+        }
         setArtsFiltered(arts);
     }
 
@@ -49,6 +54,8 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                         item.CACODART.includes(filterValue))
                 });
                 setArtsFiltered(filteredRecords)
+            } else {
+                setArtsFiltered(records)
             }
             setArticoli(records);
             setLoading(false);
@@ -88,7 +95,9 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                             </div>
                         </Form.Group>
                     </Form>}
-                {!loading && artsFiltered.length>0 && artsFiltered.map((articolo) => (
+                    {/*artsFiltered.length>0 && */}
+                {!loading && artsFiltered.length===0 && <div className='text-center mt-3'>La ricerca non ha prodotto risultati!</div>}
+                {!loading && artsFiltered.map((articolo) => (
                     <Card className="mt-2" key={articolo.CACODICE} onClick={() => selectArticolo(articolo.CACODART)} style={{ cursor: 'pointer' }}>
                         <Card.Body>
                             <Card.Title>{articolo.CACODART}</Card.Title>
@@ -96,14 +105,14 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                         </Card.Body>
                     </Card>
                 ))}
-                {!loading && artsFiltered.length===0 && articoli.map((articolo) => (
+                {/* {!loading && artsFiltered.length===0 && articoli.map((articolo) => (
                     <Card className="mt-2" key={articolo.CACODICE} onClick={() => selectArticolo(articolo.CACODART)} style={{ cursor: 'pointer' }}>
                         <Card.Body>
                             <Card.Title>{articolo.CACODART}</Card.Title>
                             <Card.Text>{articolo.CADESART + articolo.CADESSUP}</Card.Text>
                         </Card.Body>
                     </Card>
-                ))}
+                ))} */}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
