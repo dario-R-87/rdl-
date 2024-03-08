@@ -3,3 +3,7 @@
     color: blue;
     /* Altri stili desiderati */
 }
+
+.update-input{
+    border: 2px solid red;
+}

@@ -85,27 +85,30 @@ const CreateDocument = () => {
     };
 
     const handleSubmit = async () => {
-        if (rows.length === 0)
-            alert("Nessura riga inserita");
-        else {
-            try {
-                await Promise.all(rows.map(postData)); // Esegue tutte le richieste in parallelo
-                // Se tutte le richieste sono state completate con successo
-                setFormData({
-                    tipdoc: 'INVEN',
-                    datadoc: getCurrentDate(),
-                    codart: '',
-                    unimis: 'n.',
-                    quanti: 1,
-                    codmat: 'NULL',
-                });
-                setIsTestataSave(false);
-                setRows([]);
-                alert("Documento Creato!");
-                navigate('/');
-            } catch (error) {
-                // Se una o più richieste hanno fallito, gestisci l'errore qui
-                window.alert(error.message);
+        const conferma = window.confirm("Sei sicuro di voler salvare il documento?");
+        if (conferma) {
+            if (rows.length === 0)
+                alert("Nessura riga inserita");
+            else {
+                try {
+                    await Promise.all(rows.map(postData)); // Esegue tutte le richieste in parallelo
+                    // Se tutte le richieste sono state completate con successo
+                    setFormData({
+                        tipdoc: 'INVEN',
+                        datadoc: getCurrentDate(),
+                        codart: '',
+                        unimis: 'n.',
+                        quanti: 1,
+                        codmat: 'NULL',
+                    });
+                    setIsTestataSave(false);
+                    setRows([]);
+                    alert("Documento Creato!");
+                    navigate('/');
+                } catch (error) {
+                    // Se una o più richieste hanno fallito, gestisci l'errore qui
+                    window.alert(error.message);
+                }
             }
         }
     };
@@ -123,10 +126,11 @@ const CreateDocument = () => {
             ...formData,
             codart: selected.CACODART,
             desc: selected.CADESART,
+            search: "",
         })
         setCurrentArt(selected)
     }
-    
+
     const resetByUpdate = () => {
         setFormData({
             ...formData,
@@ -138,9 +142,10 @@ const CreateDocument = () => {
         });
         setUpdate({ ...update, updating: false, rownum: 0 })
     }
+
     const addRowHandler = (e) => {
         e.preventDefault();
-        if(formData.codart===''){
+        if (formData.codart === '') {
             alert('Inserisci Articolo')
             return
         }
@@ -163,7 +168,7 @@ const CreateDocument = () => {
         if (rows.length === 0)
             setIsTestataSave(true)
     }
-    
+
     const onDelete = (rownum) => {
         // Filtra gli elementi escludendo quello con rownum uguale a rownumToDelete
         const updatedRows = rows.filter(row => row.rownum !== rownum);
@@ -231,27 +236,56 @@ const CreateDocument = () => {
                         Conferma Testata
                     </Button>
                 </div>}
+                <div className='text-center fw-bold text-danger mt-3'>
+                    {update.updating ? `MODIFICA RIGA ${update.rownum}` : ''}
+                </div>
                 <Form.Group controlId="codart">
                     <Form.Label className='custom-label mt-3'>Articolo</Form.Label>
                     <div className='d-flex'>
-                        <Form.Control placeholder="Cerca..." type="text" name="search" value={formData.search} onChange={handleChange} />
+                        <Form.Control
+                            className={update.updating ? 'update-input' : ''}
+                            placeholder="Cerca..."
+                            type="text"
+                            name="search"
+                            value={formData.search}
+                            onChange={handleChange}
+                        />
                         <Button onClick={artHandler}><FontAwesomeIcon icon={faSearch} /></Button>
                     </div>
-                    <Form.Control placeholder="Codice" required type="text" name="codart" defaultValue={formData.codart} disabled/>
-                    <Form.Control placeholder="Descrizione" type="text" name="desc" defaultValue={formData.desc} readOnly disabled/>
+                    <Form.Control
+                        placeholder="Codice"
+                        required type="text"
+                        name="codart"
+                        defaultValue={formData.codart}
+                        disabled
+                    />
+                    <Form.Control placeholder="Descrizione" type="text" name="desc" defaultValue={formData.desc} readOnly disabled />
                     {show && <Articoli show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect} searchValue={formData.search}></Articoli>}
                 </Form.Group>
 
                 <Form.Group controlId="unimis">
                     <Form.Label className='custom-label mt-3'>Unità di Misura</Form.Label>
-                    <Form.Control required as="select" name="unimis" value={formData.unimis} onChange={handleChange}>
+                    <Form.Control
+                        className={update.updating ? 'update-input' : ''}
+                        required
+                        as="select"
+                        name="unimis"
+                        value={formData.unimis}
+                        onChange={handleChange}>
                         <option value="pz">Pz</option>
                     </Form.Control>
                 </Form.Group>
 
                 <Form.Group controlId="quanti">
                     <Form.Label className='custom-label mt-3'>Quantità</Form.Label>
-                    <Form.Control required type="number" name="quanti" value={formData.quanti} onChange={handleChange} />
+                    <Form.Control
+                        className={update.updating ? 'update-input' : ''}
+                        required
+                        type="number"
+                        name="quanti"
+                        value={formData.quanti}
+                        onChange={handleChange}
+                    />
                 </Form.Group>
 
                 {false && <Form.Group controlId="codmat">

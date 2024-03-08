@@ -11,6 +11,7 @@ const RowsList = ({ rows, handleDelete, handleUpdate }) => {
             {rows.slice().reverse().map((row) => (
                 <Card key={row.rownum} className="mb-3 bg-primary text-white">
                     <Card.Body>
+                        <div className='text-dark'><strong>RIGA {row.rownum}</strong></div>
                         <div className="d-flex justify-content-between align-items-center">
                             <div>
                                 <Card.Text>Art: <strong>{row.desc}</strong></Card.Text>
