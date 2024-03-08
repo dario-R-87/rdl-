@@ -38,6 +38,17 @@ recordRoutes.route("/articoli").get(function (req, res) {
     });
 });
 
+recordRoutes.route("/matricole").get(function (req, res) {
+  db.query("SELECT * FROM dbo.HRI__MATRICOL")
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 recordRoutes.route("/record").get(function (req, res) {
   db.query("SELECT * FROM dbo.HRI__ZUAPPAHR")
     .then(result => {
