@@ -149,6 +149,7 @@ const CreateDocument = () => {
             codart: selected.CACODART,
             desc: selected.CADESART,
             search: "",
+            codmat: ''
         })
         getArtData(selected)
     }
@@ -164,6 +165,7 @@ const CreateDocument = () => {
         });
         setUpdate({ ...update, updating: false, rownum: 0 })
         setCurrentArt({CACODART:"", data:{ARGESMAT:"N"}})
+        setCurrentMat([]);
     }
 
     const addRowHandler = (e) => {
@@ -178,6 +180,7 @@ const CreateDocument = () => {
             magpar: '1026',
             insuser: '690a10eb6bd3636a',
             rownum: (rows.length + 1) * 10,
+            matricole: currentMat,
         }
         setRows(prevRows => [...prevRows, newRecord]);
         // Resetta il formData
@@ -204,6 +207,7 @@ const CreateDocument = () => {
     const onUpdate = (rownum) => {
         setUpdate({ ...update, updating: true, rownum: rownum })
         const rowByUpdate = rows.find(row => row.rownum === rownum);
+        setCurrentMat(rowByUpdate.matricole)
         setFormData({
             ...formData,
             codmat: rowByUpdate.codmat,
@@ -215,31 +219,38 @@ const CreateDocument = () => {
 
     const updateRow = () => {
         // Crea un nuovo array aggiornando l'elemento con il rownum corrispondente
-        const updatedRows = rows.map(row => {
-            // Se rownum corrisponde, aggiorna l'elemento con i dati da formData
-            if (row.rownum === update.rownum) {
-                return {
-                    ...row,
-                    codmat: formData.codmat,
-                    quanti: formData.quanti,
-                    codart: formData.codart,
-                    desc: formData.desc
-                };
-            }
-            // Altrimenti, lascia l'elemento invariato
-            return row;
-        });
-        // Aggiorna lo stato con il nuovo array di elementi
-        setRows(updatedRows);
-        // Resetta il formData
-        resetByUpdate();
-        alert("Riga Aggiornata");
+        if(currentMat.length>0 && formData.codmat===''){
+            alert("Inserisci una matricola")
+        } else {
+            const updatedRows = rows.map(row => {
+                // Se rownum corrisponde, aggiorna l'elemento con i dati da formData
+                if (row.rownum === update.rownum) {
+                    return {
+                        ...row,
+                        codmat: formData.codmat,
+                        quanti: formData.quanti,
+                        codart: formData.codart,
+                        desc: formData.desc,
+                        matricole: currentMat,
+                    };
+                }
+                // Altrimenti, lascia l'elemento invariato
+                return row;
+            });
+            // Aggiorna lo stato con il nuovo array di elementi
+            setRows(updatedRows);
+            // Resetta il formData
+            resetByUpdate();
+            alert("Riga Aggiornata");
+        }
     }
 
     const test=()=>{
         //console.log("artdata: "+artData.ARGESMAT)
         console.log("matricole: "+currentMat.length)
         setA(!aaa)
+        const x = [];
+        console.log(x[0])
     }
 
     return (
@@ -319,11 +330,17 @@ const CreateDocument = () => {
                     />
                 </Form.Group>
 
-                {currentArt.data.ARGESMAT==='S' && <Form.Group controlId="codmat">
+                {(currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) && <Form.Group controlId="codmat">
                     <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
-                    <Form.Control required as="select" name="codmat" value={formData.codmat} onChange={handleChange}>
-                        <option value=""></option>
-                        {currentMat.map((mat)=> <option value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
+                    <Form.Control 
+                        className={update.updating ? 'update-input' : ''}
+                        required 
+                        as="select" 
+                        name="codmat" 
+                        value={formData.codmat} 
+                        onChange={handleChange}>
+                         <option value=""></option>
+                         {currentMat.map((mat)=> <option key={mat.AMCODICE} value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
                     </Form.Control>
                 </Form.Group>}
 

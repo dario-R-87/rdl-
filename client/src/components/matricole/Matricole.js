@@ -1,9 +1,7 @@
-import  { useState, useEffect } from 'react';
+import  { useEffect } from 'react';
 
 
 const Matricole = ({serial, onLoadMat}) => {
-    const [matricole, setMatricole] = useState([]);
-    const [seriale, setSeriale] = useState("");
 
     const getMatricole = async () => {
         if(serial!==""){
@@ -15,8 +13,6 @@ const Matricole = ({serial, onLoadMat}) => {
                     return;
                 }
                 let records = await response.json();
-                console.log("records "+records.length)
-                setMatricole(records);
                 onLoadMat(records)
             } catch (error) {
                 alert(error.message);
@@ -25,25 +21,8 @@ const Matricole = ({serial, onLoadMat}) => {
     };
 
     useEffect(() => {
-        setSeriale(serial);
         getMatricole();
     }, [serial]);
-    console.log("componente matricole: "+matricole.length)
-    console.log(seriale)
-
-    // const test= ()=>{
-    //     console.log(articoli.length)
-    //     console.log(matricole.length)
-    //     articoli.forEach((art)=>{
-    //         const filter=matricole.filter((item) => {
-    //             return (item.AMCODART.includes(art.CACODART))
-    //             });
-            
-    //         console.log(art.CACODART+" "+filter.length)
-    //     })
-
-
-    // }
 
     return null;
 }
