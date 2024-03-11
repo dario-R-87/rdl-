@@ -228,7 +228,7 @@ const CreateDocument = () => {
                     return {
                         ...row,
                         codmat: formData.codmat,
-                        quanti: formData.quanti,
+                        quanti: currentMat.length>0 ? 1 :formData.quanti,
                         codart: formData.codart,
                         desc: formData.desc,
                         matricole: currentMat,
@@ -325,7 +325,8 @@ const CreateDocument = () => {
                         required
                         type="number"
                         name="quanti"
-                        value={formData.quanti}
+                        disabled={(currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) ? true : false}
+                        value={(currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) ? 1 : formData.quanti}
                         onChange={handleChange}
                     />
                 </Form.Group>
