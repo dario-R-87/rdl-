@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import Articoli from '../articoli/Articoli';
 import "./document.css"
+import Matricole from '../matricole/Matricole';
 
 
 const CreateDocument = () => {
@@ -27,7 +28,7 @@ const CreateDocument = () => {
         codart: '',
         unimis: 'n.',
         quanti: 1,
-        codmat: null,
+        codmat: '',
         search: '',
         desc: ''
     });
@@ -36,7 +37,9 @@ const CreateDocument = () => {
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
     const [newSerial, setNewSerial] = useState('0000000001')
     const [show, setShow] = useState(false);
-    const [currentArt, setCurrentArt] = useState({})
+    const [currentArt, setCurrentArt] = useState({CACODART:"", data:{ARGESMAT:"N"}})
+    const [currentMat, setCurrentMat] = useState([]);
+    const [aaa,setA]=useState(false);
 
     useEffect(() => {
         async function getMaxSerial() {
@@ -99,7 +102,7 @@ const CreateDocument = () => {
                         codart: '',
                         unimis: 'n.',
                         quanti: 1,
-                        codmat: 'NULL',
+                        codmat: '',
                     });
                     setIsTestataSave(false);
                     setRows([]);
@@ -121,26 +124,46 @@ const CreateDocument = () => {
         setShow(!show)
     }
 
-    const onArtSelect = (selected) => {
+    const hanldeMat = (matricole)=>{
+        setCurrentMat(matricole);
+    }
+
+    const getArtData = async (selected) => {
+        try {
+            const response = await fetch(`http://192.168.1.29:5000/artsdata/${selected.CACODICE}`);
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            const artData = await response.json();
+            setCurrentArt({...selected, data: artData[0]})
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    const onArtSelect = async (selected) => {
         setFormData({
             ...formData,
             codart: selected.CACODART,
             desc: selected.CADESART,
             search: "",
         })
-        setCurrentArt(selected)
+        getArtData(selected)
     }
 
     const resetByUpdate = () => {
         setFormData({
             ...formData,
             quanti: 1,
-            codmat: 'NULL',
+            codmat: '',
             codart: '',
             desc: '',
             search: '',
         });
         setUpdate({ ...update, updating: false, rownum: 0 })
+        setCurrentArt({CACODART:"", data:{ARGESMAT:"N"}})
     }
 
     const addRowHandler = (e) => {
@@ -213,8 +236,16 @@ const CreateDocument = () => {
         alert("Riga Aggiornata");
     }
 
+    const test=()=>{
+        //console.log("artdata: "+artData.ARGESMAT)
+        console.log("matricole: "+currentMat.length)
+        setA(!aaa)
+    }
+
     return (
         <Container className='mt-3'>
+            <button onClick={test}>test</button>
+            <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <div className='my-3 d-flex justify-content-between'>
                 <Link to="/"><Button variant='secondary'>Home</Button></Link>
                 <h2>Nuovo Documento</h2>
@@ -288,9 +319,12 @@ const CreateDocument = () => {
                     />
                 </Form.Group>
 
-                {false && <Form.Group controlId="codmat">
+                {currentArt.data.ARGESMAT==='S' && <Form.Group controlId="codmat">
                     <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
-                    <Form.Control required type="text" name="codmat" value={formData.codmat} onChange={handleChange} />
+                    <Form.Control required as="select" name="codmat" value={formData.codmat} onChange={handleChange}>
+                        <option value=""></option>
+                        {currentMat.map((mat)=> <option value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
+                    </Form.Control>
                 </Form.Group>}
 
                 <div className='d-flex justify-content-between'>

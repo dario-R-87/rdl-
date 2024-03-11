@@ -37,9 +37,24 @@ recordRoutes.route("/articoli").get(function (req, res) {
       res.status(500).json({ error: "Errore nel recupero dei dati" });
     });
 });
+//SELECT ARGESMAT FROM dbo.HRI__ART_ICOL
 
-recordRoutes.route("/matricole").get(function (req, res) {
-  db.query("SELECT * FROM dbo.HRI__MATRICOL")
+recordRoutes.route("/artsdata/:serial").get(function (req, res) {
+  const serial = req.params.serial;
+  db.query(`SELECT ARGESMAT FROM dbo.HRI__ART_ICOL WHERE ARCODART='${serial}'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
+
+recordRoutes.route("/matricole/:serial").get(function (req, res) {
+  const serial = req.params.serial;
+  db.query(`SELECT * FROM dbo.HRI__MATRICOL WHERE AMKEYSAL='${serial}'`)
     .then(result => {
       res.json(result);
     })
@@ -112,17 +127,6 @@ recordRoutes.route("/record/add").post(function (req, res) {
 // // This section will help you get a list of all the records.
 // recordRoutes.route("/record").get(function (req, res) {
 
-//  let db_connect = dbo.getDb("prova");
-
-// db_connect.collection("persona").find({}).toArray()
-//   .then(result => {
-//     res.json(result);
-//   })
-//   .catch(err => {
-//     console.error("Errore nel recupero dei dati:", err);
-//   });
-// }); 
-
 // // This section will help you get a single record by id
 // recordRoutes.route("/record/:id").get(function (req, res) {
 //  let db_connect = dbo.getDb();
@@ -139,6 +143,18 @@ recordRoutes.route("/record/add").post(function (req, res) {
 //    });*/
 //   db_connect.collection("persona").findOne(myquery).then(result => {res.json(result);}).catch(err => {console.error("Errore nel recupero dei dati:", err);});
 // });
+
+
+//  let db_connect = dbo.getDb("prova");
+
+// db_connect.collection("persona").find({}).toArray()
+//   .then(result => {
+//     res.json(result);
+//   })
+//   .catch(err => {
+//     console.error("Errore nel recupero dei dati:", err);
+//   });
+// }); 
 
 // // This section will help you update a record by id.
 // recordRoutes.route("/update/:id").post(function (req, response) {

@@ -18,7 +18,7 @@ const RowsList = ({ rows, handleDelete, handleUpdate }) => {
                                 <Card.Text>
                                     {row.unimis}: <strong>{row.quanti}</strong>
                                 </Card.Text>
-                                {false &&<Card.Text>
+                                {row.codmat!=="" && <Card.Text>
                                     Mat.: <strong>{row.codmat}</strong>
                                 </Card.Text>}
                             </div>
