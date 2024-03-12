@@ -97,12 +97,13 @@ recordRoutes.route("/record/add").post(function (req, res) {
     quanti,
     codmat,
     magpar,
+    magdes,
     insuser,
     rownum
   } = req.body; // Assumendo che il body della richiesta contenga i dati per il nuovo record
 
-  db.query(`INSERT INTO dbo.HRI__ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, INSUSER, ROWNUM) VALUES
-  ('${serial}', '${tipdoc}', '${datadoc}', '${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${insuser}', ${rownum})`)
+  db.query(`INSERT INTO dbo.HRI__ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM) VALUES
+  ('${serial}', '${tipdoc}', '${datadoc}', '${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${magdes}', '${insuser}', ${rownum})`)
     .then(result => {
       res.status(201).json({ message: "Record aggiunto con successo" });
     })
@@ -110,18 +111,29 @@ recordRoutes.route("/record/add").post(function (req, res) {
       console.error("Errore nell'aggiunta del record:", err);
       res.status(500).json({ error: "Errore nell'aggiunta del record" });
     });
-  });
+});
 
-  //  let db_connect = dbo.getDb();
-  //  let myobj = {
-  //    name: req.body.name,
-  //    surname: req.body.surname,
-  // };
-  //  /*db_connect.collection("persona").insertOne(myobj, function (err, res) {
-  //    if (err) throw err;
-  //    response.json(res);
-  //  });*/
-  //  db_connect.collection("persona").insertOne(myobj).then(res => {response.json(res);}).catch(err => {console.error("Errore nel recupero dei dati:", err);});
+recordRoutes.route("/doctype").get(function (req, res) {
+  db.query("SELECT TDTIPDOC,TDDESDOC,ZUFLGAPP FROM dbo.HRI__TIP_DOCU WHERE ZUFLGAPP='S'")
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
+//  let db_connect = dbo.getDb();
+//  let myobj = {
+//    name: req.body.name,
+//    surname: req.body.surname,
+// };
+//  /*db_connect.collection("persona").insertOne(myobj, function (err, res) {
+//    if (err) throw err;
+//    response.json(res);
+//  });*/
+//  db_connect.collection("persona").insertOne(myobj).then(res => {response.json(res);}).catch(err => {console.error("Errore nel recupero dei dati:", err);});
 
 
 // // This section will help you get a list of all the records.

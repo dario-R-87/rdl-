@@ -30,6 +30,8 @@ const CreateDocument = () => {
         unimis: 'n.',
         quanti: 1,
         codmat: '',
+        magpar: '',
+        magdes: '',
         search: '',
         desc: ''
     });
@@ -109,7 +111,7 @@ const CreateDocument = () => {
                     setIsTestataSave(false);
                     setRows([]);
                     alert("Documento Creato!");
-                    navigate('/');
+                    navigate('/homepage');
                 } catch (error) {
                     // Se una o più richieste hanno fallito, gestisci l'errore qui
                     window.alert(error.message);
@@ -179,7 +181,6 @@ const CreateDocument = () => {
         const newRecord = {
             ...formData,
             serial: newSerial,
-            magpar: '1026',
             insuser: '690a10eb6bd3636a',
             rownum: (rows.length + 1) * 10,
             matricole: currentMat,
@@ -263,7 +264,7 @@ const CreateDocument = () => {
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
             <div className='my-3 d-flex justify-content-between'>
-                <Link to="/"><Button variant='secondary'>Home</Button></Link>
+                <Link to="/homepage"><Button variant='secondary'>Home</Button></Link>
                 <h2>Nuovo Documento</h2>
             </div>
             <Form onSubmit={addRowHandler}>
@@ -279,6 +280,25 @@ const CreateDocument = () => {
                     <Form.Label className='custom-label mt-3'>Data Documento</Form.Label>
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled={isTestataSave} />
                 </Form.Group>
+
+                <Form.Group controlId="magpar">
+                    <Form.Label className='custom-label mt-3'>Magazzino Origine</Form.Label>
+                    <Form.Control required as="select" name="magpar" value={formData.magpar} onChange={handleChange}>
+                        <option value=""></option>
+                        <option value="M1">MAG 1</option>
+                        {/* {docType.map((type)=> <option key={type.TDTIPDOC} value={type.TDTIPDOC}>{type.TDDESDOC}</option>)} */}
+                    </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="magdes">
+                    <Form.Label className='custom-label mt-3'>Magazzino Destinazione</Form.Label>
+                    <Form.Control required as="select" name="magdes" value={formData.magdes} onChange={handleChange}>
+                        <option value=""></option>
+                        <option value="M2">MAG 2</option>
+                        {/* {docType.map((type)=> <option key={type.TDTIPDOC} value={type.TDTIPDOC}>{type.TDDESDOC}</option>)} */}
+                    </Form.Control>
+                </Form.Group>
+
                 {/* {!isTestataSave && <div>
                     <Button className="mt-3" variant="success" onClick={salvaTestata}>
                         Conferma Testata
