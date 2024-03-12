@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Articoli from '../articoli/Articoli';
 import "./document.css"
 import Matricole from '../matricole/Matricole';
+import DocType from './DocType';
 
 
 const CreateDocument = () => {
@@ -39,6 +40,7 @@ const CreateDocument = () => {
     const [show, setShow] = useState(false);
     const [currentArt, setCurrentArt] = useState({CACODART:"", data:{ARGESMAT:"N"}})
     const [currentMat, setCurrentMat] = useState([]);
+    const [docType, setDocType] = useState([]);
     const [aaa,setA]=useState(false);
 
     useEffect(() => {
@@ -245,18 +247,21 @@ const CreateDocument = () => {
         }
     }
 
+    const handleDocType = (records) => {
+        setDocType(records);
+    }
+
     const test=()=>{
         //console.log("artdata: "+artData.ARGESMAT)
-        console.log("matricole: "+currentMat.length)
+        console.log("doc type: "+docType.length)
         setA(!aaa)
-        const x = [];
-        console.log(x[0])
     }
 
     return (
         <Container className='mt-3'>
             <button onClick={test}>test</button>
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
+            <DocType onLoadDocType={handleDocType}/>
             <div className='my-3 d-flex justify-content-between'>
                 <Link to="/"><Button variant='secondary'>Home</Button></Link>
                 <h2>Nuovo Documento</h2>
@@ -264,8 +269,9 @@ const CreateDocument = () => {
             <Form onSubmit={addRowHandler}>
                 <Form.Group controlId="tipdoc">
                     <Form.Label className='custom-label mt-3'>Tipo Documento</Form.Label>
-                    <Form.Control as="select" name="tipdoc" value={formData.tipdoc} onChange={handleChange} disabled={isTestataSave}>
-                        <option value="INVEN">Inventario</option>
+                    <Form.Control required as="select" name="tipdoc" value={formData.tipdoc} onChange={handleChange} disabled={isTestataSave}>
+                        <option value=""></option>
+                        {docType.map((type)=> <option key={type.TDTIPDOC} value={type.TDTIPDOC}>{type.TDDESDOC}</option>)}
                     </Form.Control>
                 </Form.Group>
 
@@ -273,11 +279,11 @@ const CreateDocument = () => {
                     <Form.Label className='custom-label mt-3'>Data Documento</Form.Label>
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled={isTestataSave} />
                 </Form.Group>
-                {!isTestataSave && <div>
+                {/* {!isTestataSave && <div>
                     <Button className="mt-3" variant="success" onClick={salvaTestata}>
                         Conferma Testata
                     </Button>
-                </div>}
+                </div>} */}
                 <div className='text-center fw-bold text-danger mt-3'>
                     {update.updating ? `MODIFICA RIGA ${update.rownum}` : ''}
                 </div>
