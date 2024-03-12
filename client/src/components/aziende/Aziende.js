@@ -1,27 +1,25 @@
 import { useEffect } from 'react';
 
-const DocType = ({ onLoadDocType }) => {
-    const azienda = localStorage.getItem("azienda")
-
-    const getDocType = async () => {
+const Aziende = ({onLoadAz}) => {
+    const getAziende = async () => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/doctype/${azienda}`);
+            const response = await fetch(`http://192.168.1.29:5000/aziende`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
                 return;
             }
             let records = await response.json();
-            onLoadDocType(records)
+            onLoadAz(records)
         } catch (error) {
             alert(error.message);
         }
     };
 
     useEffect(() => {
-        getDocType();
+        getAziende();
     }, []);
     return null;
 }
 
-export default DocType
+export default Aziende

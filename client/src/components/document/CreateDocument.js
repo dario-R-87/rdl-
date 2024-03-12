@@ -35,6 +35,7 @@ const CreateDocument = () => {
         search: '',
         desc: ''
     });
+    const azienda = localStorage.getItem("azienda")
     const [rows, setRows] = useState([]);
     const [isTestataSave, setIsTestataSave] = useState(false)
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
@@ -47,7 +48,7 @@ const CreateDocument = () => {
 
     useEffect(() => {
         async function getMaxSerial() {
-            const response = await fetch("http://192.168.1.29:5000/new_serial");
+            const response = await fetch(`http://192.168.1.29:5000/new_serial/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -75,7 +76,7 @@ const CreateDocument = () => {
 
     const postData = async (row) => {
         try {
-            const response = await fetch("http://192.168.1.29:5000/record/add", {
+            const response = await fetch(`http://192.168.1.29:5000/record/add/${azienda}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -120,9 +121,9 @@ const CreateDocument = () => {
         }
     };
 
-    const salvaTestata = () => {
-        setIsTestataSave(true)
-    }
+    // const salvaTestata = () => {
+    //     setIsTestataSave(true)
+    // }
 
     const artHandler = () => {
         setShow(!show)
@@ -134,7 +135,7 @@ const CreateDocument = () => {
 
     const getArtData = async (selected) => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/artsdata/${selected.CACODICE}`);
+            const response = await fetch(`http://192.168.1.29:5000/artsdata/${azienda}/${selected.CACODICE}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -256,6 +257,8 @@ const CreateDocument = () => {
         //console.log("artdata: "+artData.ARGESMAT)
         console.log("doc type: "+docType.length)
         setA(!aaa)
+        console.log(newSerial)
+
     }
 
     return (
@@ -272,6 +275,7 @@ const CreateDocument = () => {
                     <Form.Label className='custom-label mt-3'>Tipo Documento</Form.Label>
                     <Form.Control required as="select" name="tipdoc" value={formData.tipdoc} onChange={handleChange} disabled={isTestataSave}>
                         <option value=""></option>
+                        <option value="AAAAA">AAAAA</option>
                         {docType.map((type)=> <option key={type.TDTIPDOC} value={type.TDTIPDOC}>{type.TDDESDOC}</option>)}
                     </Form.Control>
                 </Form.Group>

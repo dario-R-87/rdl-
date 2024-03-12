@@ -4,6 +4,7 @@ import LoadSpinner from "../loading/LoadSpinner";
 
 
 const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
+    const azienda = localStorage.getItem("azienda")
     const [articoli, setArticoli] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filterValue, setFilterValue] = useState(searchValue);
@@ -40,7 +41,7 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
     const getArticoli = async () => {
         try {
             setLoading(true);
-            const response = await fetch("http://192.168.1.29:5000/articoli");
+            const response = await fetch(`http://192.168.1.29:5000/articoli/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);

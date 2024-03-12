@@ -10,8 +10,8 @@ export default function Navbar() {
  return (
    <div>
      <nav className="navbar navbar-expand-lg navbar-light bg-primary">
-       <NavLink className="navbar-brand" to="/homepage">
-       <img style={{"width" : 25 + '%'}} src="./zutec_logo.png" alt="logo"></img>
+       <NavLink className="navbar-brand" to="/">
+         <img style={{"width" : 25 + '%'}} src="./zutec_logo.png" alt="logo"></img>
        </NavLink>
      </nav>
    </div>

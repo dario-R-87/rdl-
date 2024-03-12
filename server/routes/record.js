@@ -27,8 +27,9 @@ const db = require("../db/conn");
 //     });
 // });
 
-recordRoutes.route("/articoli").get(function (req, res) {
-  db.query("SELECT CACODICE, CADESART, CADESSUP, CACODART FROM dbo.HRI__KEY_ARTI")
+recordRoutes.route("/articoli/:azienda").get(function (req, res) {
+  const azienda = req.params.azienda;
+  db.query(`SELECT CACODICE, CADESART, CADESSUP, CACODART FROM dbo.${azienda}KEY_ARTI`)
     .then(result => {
       res.json(result);
     })
@@ -39,9 +40,10 @@ recordRoutes.route("/articoli").get(function (req, res) {
 });
 //SELECT ARGESMAT FROM dbo.HRI__ART_ICOL
 
-recordRoutes.route("/artsdata/:serial").get(function (req, res) {
+recordRoutes.route("/artsdata/:azienda/:serial").get(function (req, res) {
   const serial = req.params.serial;
-  db.query(`SELECT ARGESMAT FROM dbo.HRI__ART_ICOL WHERE ARCODART='${serial}'`)
+  const azienda = req.params.azienda;
+  db.query(`SELECT ARGESMAT FROM dbo.${azienda}ART_ICOL WHERE ARCODART='${serial}'`)
     .then(result => {
       res.json(result);
     })
@@ -52,9 +54,10 @@ recordRoutes.route("/artsdata/:serial").get(function (req, res) {
 });
 
 
-recordRoutes.route("/matricole/:serial").get(function (req, res) {
+recordRoutes.route("/matricole/:azienda/:serial").get(function (req, res) {
   const serial = req.params.serial;
-  db.query(`SELECT * FROM dbo.HRI__MATRICOL WHERE AMKEYSAL='${serial}'`)
+  const azienda = req.params.azienda;
+  db.query(`SELECT * FROM dbo.${azienda}MATRICOL WHERE AMKEYSAL='${serial}'`)
     .then(result => {
       res.json(result);
     })
@@ -75,8 +78,9 @@ recordRoutes.route("/record").get(function (req, res) {
     });
 });
 
-recordRoutes.route("/new_serial").get(function (req, res) {
-  db.query("SELECT MAX(SERIAL) AS MAX_SERIAL FROM dbo.HRI__ZUAPPAHR")
+recordRoutes.route("/new_serial/:azienda").get(function (req, res) {
+  const azienda = req.params.azienda;
+  db.query(`SELECT MAX(SERIAL) AS MAX_SERIAL FROM dbo.${azienda}ZUAPPAHR`)
     .then(result => {
       res.json(result);
     })
@@ -87,7 +91,8 @@ recordRoutes.route("/new_serial").get(function (req, res) {
 });
 
 // This section will help you create a new record.
-recordRoutes.route("/record/add").post(function (req, res) {
+recordRoutes.route("/record/add/:azienda").post(function (req, res) {
+  const azienda = req.params.azienda;
   const {
     serial,
     tipdoc,
@@ -102,7 +107,7 @@ recordRoutes.route("/record/add").post(function (req, res) {
     rownum
   } = req.body; // Assumendo che il body della richiesta contenga i dati per il nuovo record
 
-  db.query(`INSERT INTO dbo.HRI__ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM) VALUES
+  db.query(`INSERT INTO dbo.${azienda}ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM) VALUES
   ('${serial}', '${tipdoc}', '${datadoc}', '${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${magdes}', '${insuser}', ${rownum})`)
     .then(result => {
       res.status(201).json({ message: "Record aggiunto con successo" });
@@ -113,8 +118,20 @@ recordRoutes.route("/record/add").post(function (req, res) {
     });
 });
 
-recordRoutes.route("/doctype").get(function (req, res) {
-  db.query("SELECT TDTIPDOC,TDDESDOC,ZUFLGAPP FROM dbo.HRI__TIP_DOCU WHERE ZUFLGAPP='S'")
+recordRoutes.route("/doctype/:azienda").get(function (req, res) {
+  const azienda = req.params.azienda;
+  db.query(`SELECT TDTIPDOC,TDDESDOC,ZUFLGAPP FROM dbo.${azienda}TIP_DOCU WHERE ZUFLGAPP='S'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
+recordRoutes.route("/aziende").get(function (req, res) {
+  db.query("SELECT AZCODAZI, AZRAGAZI FROM dbo.AZIENDA")
     .then(result => {
       res.json(result);
     })
