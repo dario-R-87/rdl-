@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +24,7 @@ const CreateDocument = () => {
     };
 
     const [formData, setFormData] = useState({
-        tipdoc: 'INVEN',
+        tipdoc: '',
         datadoc: getCurrentDate(),
         codart: '',
         unimis: 'n.',
@@ -44,6 +44,9 @@ const CreateDocument = () => {
     const [currentArt, setCurrentArt] = useState({CACODART:"", data:{ARGESMAT:"N"}})
     const [currentMat, setCurrentMat] = useState([]);
     const [docType, setDocType] = useState([]);
+    const formRef = useRef(null);
+    const cards = useRef(null);
+
     const [aaa,setA]=useState(false);
 
     useEffect(() => {
@@ -121,9 +124,12 @@ const CreateDocument = () => {
         }
     };
 
-    // const salvaTestata = () => {
-    //     setIsTestataSave(true)
-    // }
+    const salvaTestata = () => {
+        if(formData.datadoc!=="" && formData.tipdoc!=="")
+            setIsTestataSave(true)
+        else
+            alert("Inserire tipo e data documento!")
+    }
 
     const artHandler = () => {
         setShow(!show)
@@ -187,16 +193,14 @@ const CreateDocument = () => {
             matricole: currentMat,
         }
         setRows(prevRows => [...prevRows, newRecord]);
-        // Resetta il formData
-        // setFormData({
-        //     ...formData,
-        //     quanti: 1,
-        //     codmat: 'NULL',
-        // });
         alert("Riga Aggiunta")
         resetByUpdate();
         if (rows.length === 0)
             setIsTestataSave(true)
+        if(cards.current) {
+            // Usa il metodo scrollIntoView() per scorrere fino al form
+            cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
     }
 
     const onDelete = (rownum) => {
@@ -219,6 +223,10 @@ const CreateDocument = () => {
             codart: rowByUpdate.codart,
             desc: rowByUpdate.desc
         })
+        if(formRef.current) {
+            // Usa il metodo scrollIntoView() per scorrere fino al form
+            formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
     }
 
     const updateRow = () => {
@@ -254,11 +262,8 @@ const CreateDocument = () => {
     }
 
     const test=()=>{
-        //console.log("artdata: "+artData.ARGESMAT)
-        console.log("doc type: "+docType.length)
+        console.log(formData.datadoc)
         setA(!aaa)
-        console.log(newSerial)
-
     }
 
     return (
@@ -285,32 +290,16 @@ const CreateDocument = () => {
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled={isTestataSave} />
                 </Form.Group>
 
-                <Form.Group controlId="magpar">
-                    <Form.Label className='custom-label mt-3'>Magazzino Origine</Form.Label>
-                    <Form.Control required as="select" name="magpar" value={formData.magpar} onChange={handleChange}>
-                        <option value=""></option>
-                        <option value="M1">MAG 1</option>
-                        {/* {docType.map((type)=> <option key={type.TDTIPDOC} value={type.TDTIPDOC}>{type.TDDESDOC}</option>)} */}
-                    </Form.Control>
-                </Form.Group>
-
-                <Form.Group controlId="magdes">
-                    <Form.Label className='custom-label mt-3'>Magazzino Destinazione</Form.Label>
-                    <Form.Control required as="select" name="magdes" value={formData.magdes} onChange={handleChange}>
-                        <option value=""></option>
-                        <option value="M2">MAG 2</option>
-                        {/* {docType.map((type)=> <option key={type.TDTIPDOC} value={type.TDTIPDOC}>{type.TDDESDOC}</option>)} */}
-                    </Form.Control>
-                </Form.Group>
-
-                {/* {!isTestataSave && <div>
+                {!isTestataSave && <div>
                     <Button className="mt-3" variant="success" onClick={salvaTestata}>
                         Conferma Testata
                     </Button>
-                </div>} */}
-                <div className='text-center fw-bold text-danger mt-3'>
+                </div>}
+
+                <div ref={formRef} className='text-center fw-bold text-danger mt-5'>
                     {update.updating ? `MODIFICA RIGA ${update.rownum}` : ''}
                 </div>
+
                 <Form.Group controlId="codart">
                     <Form.Label className='custom-label mt-3'>Articolo</Form.Label>
                     <div className='d-flex'>
@@ -335,15 +324,45 @@ const CreateDocument = () => {
                     {show && <Articoli show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect} searchValue={formData.search}></Articoli>}
                 </Form.Group>
 
+                <Form.Group controlId="magpar">
+                    <Form.Label className='custom-label mt-3'>Magazzino Origine</Form.Label>
+                    <Form.Control 
+                        required as="select" 
+                        name="magpar" 
+                        value={formData.magpar} 
+                        onChange={handleChange}
+                        className={update.updating ? 'update-input' : ''}>
+                            <option value=""></option>
+                            <option value="M1">MAG 1</option>
+                            {/* {.map(()=> <option key={} value={}>{}</option>)} */}
+                    </Form.Control>
+                </Form.Group>
+
+                {false && <Form.Group controlId="magdes">
+                    <Form.Label className='custom-label mt-3'>Magazzino Destinazione</Form.Label>
+                    <Form.Control 
+                        required 
+                        as="select" 
+                        name="magdes" 
+                        value={formData.magdes} 
+                        onChange={handleChange}
+                        className={update.updating ? 'update-input' : ''}>
+                            <option value=""></option>
+                            <option value="M2">MAG 2</option>
+                            {/* {doc.map(()=> <option key={} value={}>{}</option>)} */}
+                    </Form.Control>
+                </Form.Group>}
+
                 <Form.Group controlId="unimis">
                     <Form.Label className='custom-label mt-3'>Unità di Misura</Form.Label>
                     <Form.Control
-                        className={update.updating ? 'update-input' : ''}
                         required
+                        className={update.updating ? 'update-input' : ''}
                         as="select"
                         name="unimis"
                         value={formData.unimis}
                         onChange={handleChange}>
+                        <option value=""></option>
                         <option value="pz">Pz</option>
                     </Form.Control>
                 </Form.Group>
@@ -355,6 +374,7 @@ const CreateDocument = () => {
                         required
                         type="number"
                         name="quanti"
+                        min="1"
                         disabled={(currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) ? true : false}
                         value={(currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) ? 1 : formData.quanti}
                         onChange={handleChange}
@@ -389,7 +409,8 @@ const CreateDocument = () => {
                         Annulla
                     </Button>}
                 </div>
-                <RowsList rows={rows} handleDelete={onDelete} handleUpdate={onUpdate} />
+
+                <div ref={cards}><RowsList rows={rows} handleDelete={onDelete} handleUpdate={onUpdate} /></div>
             </Form>
         </Container>
     );
