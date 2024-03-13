@@ -24,7 +24,7 @@ recordRoutes.route("/articoli/:azienda").get(function (req, res) {
 recordRoutes.route("/artsdata/:azienda/:serial").get(function (req, res) {
   const serial = req.params.serial;
   const azienda = req.params.azienda;
-  db.query(`SELECT ARGESMAT FROM dbo.${azienda}ART_ICOL WHERE ARCODART='${serial}'`)
+  db.query(`SELECT ARGESMAT, ARUNMIS1, ARUNMIS2 FROM dbo.${azienda}ART_ICOL WHERE ARCODART='${serial}'`)
     .then(result => {
       res.json(result);
     })
@@ -102,6 +102,18 @@ recordRoutes.route("/record/add/:azienda").post(function (req, res) {
 recordRoutes.route("/doctype/:azienda").get(function (req, res) {
   const azienda = req.params.azienda;
   db.query(`SELECT TDTIPDOC,TDDESDOC,ZUFLGAPP FROM dbo.${azienda}TIP_DOCU WHERE ZUFLGAPP='S'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
+recordRoutes.route("/mag/:azienda").get(function (req, res) {
+  const azienda = req.params.azienda;
+  db.query(`SELECT MGCODMAG, MGDESMAG FROM dbo.${azienda}MAGAZZIN`)
     .then(result => {
       res.json(result);
     })

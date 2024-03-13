@@ -9,6 +9,7 @@ import Articoli from '../articoli/Articoli';
 import "./document.css"
 import Matricole from '../matricole/Matricole';
 import DocType from './DocType';
+import Magazzini from '../magazzini/Magazzini';
 
 
 const CreateDocument = () => {
@@ -27,7 +28,7 @@ const CreateDocument = () => {
         tipdoc: '',
         datadoc: getCurrentDate(),
         codart: '',
-        unimis: 'n.',
+        unimis: '',
         quanti: 1,
         codmat: '',
         magpar: '',
@@ -41,9 +42,16 @@ const CreateDocument = () => {
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
     const [newSerial, setNewSerial] = useState('0000000001')
     const [show, setShow] = useState(false);
-    const [currentArt, setCurrentArt] = useState({CACODART:"", data:{ARGESMAT:"N"}})
+    const [currentArt, setCurrentArt] = useState({
+        CACODART:"", 
+        data:{
+            ARGESMAT:"N",
+            ARUNMIS1: null,
+            ARUNMIS2: null}
+        })
     const [currentMat, setCurrentMat] = useState([]);
     const [docType, setDocType] = useState([]);
+    const [mag, setMag] = useState([]);
     const formRef = useRef(null);
     const cards = useRef(null);
 
@@ -105,10 +113,10 @@ const CreateDocument = () => {
                     await Promise.all(rows.map(postData)); // Esegue tutte le richieste in parallelo
                     // Se tutte le richieste sono state completate con successo
                     setFormData({
-                        tipdoc: 'INVEN',
+                        tipdoc: '',
                         datadoc: getCurrentDate(),
                         codart: '',
-                        unimis: 'n.',
+                        unimis: '',
                         quanti: 1,
                         codmat: '',
                     });
@@ -160,7 +168,8 @@ const CreateDocument = () => {
             codart: selected.CACODART,
             desc: selected.CADESART,
             search: "",
-            codmat: ''
+            codmat: '',
+            unimis: '',
         })
         getArtData(selected)
     }
@@ -173,9 +182,10 @@ const CreateDocument = () => {
             codart: '',
             desc: '',
             search: '',
+            unimis: ''
         });
         setUpdate({ ...update, updating: false, rownum: 0 })
-        setCurrentArt({CACODART:"", data:{ARGESMAT:"N"}})
+        setCurrentArt({CACODART:"", data:{ARGESMAT:"N", ARUNMIS1: null, ARUNMIS2:null}})
         setCurrentMat([]);
     }
 
@@ -191,6 +201,9 @@ const CreateDocument = () => {
             insuser: '690a10eb6bd3636a',
             rownum: (rows.length + 1) * 10,
             matricole: currentMat,
+            unimis: formData.unimis,
+            unimis1: currentArt.data.ARUNMIS1,
+            unimis2: currentArt.data.ARUNMIS2,
         }
         setRows(prevRows => [...prevRows, newRecord]);
         alert("Riga Aggiunta")
@@ -216,12 +229,18 @@ const CreateDocument = () => {
         setUpdate({ ...update, updating: true, rownum: rownum })
         const rowByUpdate = rows.find(row => row.rownum === rownum);
         setCurrentMat(rowByUpdate.matricole)
+        setCurrentArt({...currentArt, 
+            data:{...currentArt.data, 
+                ARUNMIS1: rowByUpdate.unimis1,
+                ARUNMIS2: rowByUpdate.unimis2}
+            });
         setFormData({
             ...formData,
             codmat: rowByUpdate.codmat,
             quanti: rowByUpdate.quanti,
             codart: rowByUpdate.codart,
-            desc: rowByUpdate.desc
+            desc: rowByUpdate.desc,
+            unimis: rowByUpdate.unimis,
         })
         if(formRef.current) {
             // Usa il metodo scrollIntoView() per scorrere fino al form
@@ -244,6 +263,7 @@ const CreateDocument = () => {
                         codart: formData.codart,
                         desc: formData.desc,
                         matricole: currentMat,
+                        unimis: formData.unimis,
                     };
                 }
                 // Altrimenti, lascia l'elemento invariato
@@ -261,8 +281,12 @@ const CreateDocument = () => {
         setDocType(records);
     }
 
+    const handleMag = (records) => {
+        setMag(records);
+    }
+
     const test=()=>{
-        console.log(formData.datadoc)
+        console.log(currentArt)
         setA(!aaa)
     }
 
@@ -271,6 +295,7 @@ const CreateDocument = () => {
             <button onClick={test}>test</button>
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
+            <Magazzini onLoadMag={handleMag}/>
             <div className='my-3 d-flex justify-content-between'>
                 <Link to="/homepage"><Button variant='secondary'>Home</Button></Link>
                 <h2>Nuovo Documento</h2>
@@ -362,8 +387,9 @@ const CreateDocument = () => {
                         name="unimis"
                         value={formData.unimis}
                         onChange={handleChange}>
-                        <option value=""></option>
-                        <option value="pz">Pz</option>
+                            <option value=""></option>
+                            {currentArt.data.ARUNMIS1 && (<option value={currentArt.data.ARUNMIS1}>{currentArt.data.ARUNMIS1}</option>)}
+                            {currentArt.data.ARUNMIS2 && (<option value={currentArt.data.ARUNMIS2}>{currentArt.data.ARUNMIS2}</option>)}
                     </Form.Control>
                 </Form.Group>
 
