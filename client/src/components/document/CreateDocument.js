@@ -248,10 +248,19 @@ const CreateDocument = () => {
         }
     }
 
+    const updateControl = () => {
+        let msg = "";
+        if(currentMat.length>0 && formData.codmat===''){msg="Inserisci una matricola"}
+        else if(formData.magpar===""){msg="Inserisci magazzino origine"}
+        else if(formData.unimis===""){msg="Inserisci unità di misura"}
+        return msg;
+    }
+
     const updateRow = () => {
         // Crea un nuovo array aggiornando l'elemento con il rownum corrispondente
-        if(currentMat.length>0 && formData.codmat===''){
-            alert("Inserisci una matricola")
+        const msg = updateControl();
+        if(msg!==""){
+            alert(msg)
         } else {
             const updatedRows = rows.map(row => {
                 // Se rownum corrisponde, aggiorna l'elemento con i dati da formData
