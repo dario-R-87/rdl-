@@ -52,6 +52,7 @@ const CreateDocument = () => {
     const [currentMat, setCurrentMat] = useState([]);
     const [docType, setDocType] = useState([]);
     const [mag, setMag] = useState([]);
+    const [hasCauCol, setHasCauCol] = useState(false);
     const formRef = useRef(null);
     const cards = useRef(null);
 
@@ -133,10 +134,28 @@ const CreateDocument = () => {
     };
 
     const salvaTestata = () => {
-        if(formData.datadoc!=="" && formData.tipdoc!=="")
+        if(formData.datadoc!=="" && formData.tipdoc!==""){
             setIsTestataSave(true)
+            handleCauCol()    
+        }
         else
             alert("Inserire tipo e data documento!")
+    }
+
+    const handleCauCol = async() => {
+        try {
+            const tipdoc = docType.filter((tp)=>tp.TDTIPDOC.includes(formData.tipdoc));
+            const response = await fetch(`http://192.168.1.29:5000/causale_mag/${azienda}/${tipdoc[0].TDCAUMAG}`);
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            let records = await response.json();
+            setHasCauCol(records[0].CMCAUCOL ? true : false);
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
     const artHandler = () => {
@@ -295,7 +314,7 @@ const CreateDocument = () => {
     }
 
     const test=()=>{
-        console.log(currentArt)
+        console.log(hasCauCol)
         setA(!aaa)
     }
 
@@ -367,12 +386,15 @@ const CreateDocument = () => {
                         onChange={handleChange}
                         className={update.updating ? 'update-input' : ''}>
                             <option value=""></option>
-                            <option value="M1">MAG 1</option>
-                            {/* {.map(()=> <option key={} value={}>{}</option>)} */}
+                            {mag.map((ma)=>{
+                                if(ma.MGDESMAG.trim()!==''){
+                                    return <option key={ma.MGCODMAG} value={ma.MGCODMAG}>{ma.MGDESMAG}</option>}
+                                return null;
+                                })}
                     </Form.Control>
                 </Form.Group>
 
-                {false && <Form.Group controlId="magdes">
+                {hasCauCol && <Form.Group controlId="magdes">
                     <Form.Label className='custom-label mt-3'>Magazzino Destinazione</Form.Label>
                     <Form.Control 
                         required 
@@ -382,8 +404,11 @@ const CreateDocument = () => {
                         onChange={handleChange}
                         className={update.updating ? 'update-input' : ''}>
                             <option value=""></option>
-                            <option value="M2">MAG 2</option>
-                            {/* {doc.map(()=> <option key={} value={}>{}</option>)} */}
+                            {mag.map((ma)=>{
+                                if(ma.MGDESMAG.trim()!==''){
+                                    return <option key={ma.MGCODMAG} value={ma.MGCODMAG}>{ma.MGDESMAG}</option>}
+                                return null;
+                                })}
                     </Form.Control>
                 </Form.Group>}
 

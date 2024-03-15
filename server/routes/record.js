@@ -101,7 +101,7 @@ recordRoutes.route("/record/add/:azienda").post(function (req, res) {
 
 recordRoutes.route("/doctype/:azienda").get(function (req, res) {
   const azienda = req.params.azienda;
-  db.query(`SELECT TDTIPDOC,TDDESDOC,ZUFLGAPP FROM dbo.${azienda}TIP_DOCU WHERE ZUFLGAPP='S'`)
+  db.query(`SELECT TDTIPDOC,TDDESDOC,ZUFLGAPP,TDCAUMAG FROM dbo.${azienda}TIP_DOCU WHERE ZUFLGAPP='S'`)
     .then(result => {
       res.json(result);
     })
@@ -114,6 +114,19 @@ recordRoutes.route("/doctype/:azienda").get(function (req, res) {
 recordRoutes.route("/mag/:azienda").get(function (req, res) {
   const azienda = req.params.azienda;
   db.query(`SELECT MGCODMAG, MGDESMAG FROM dbo.${azienda}MAGAZZIN`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
+recordRoutes.route("/causale_mag/:azienda/:causale_mag").get(function (req, res) {
+  const azienda = req.params.azienda;
+  const causale_mag = req.params.causale_mag;
+  db.query(`SELECT CMCAUCOL FROM dbo.${azienda}CAM_AGAZ WHERE CMCODICE='${causale_mag}'`)
     .then(result => {
       res.json(result);
     })
