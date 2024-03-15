@@ -201,7 +201,9 @@ const CreateDocument = () => {
             codart: '',
             desc: '',
             search: '',
-            unimis: ''
+            unimis: '',
+            magpar: '',
+            magdes: ''
         });
         setUpdate({ ...update, updating: false, rownum: 0 })
         setCurrentArt({CACODART:"", data:{ARGESMAT:"N", ARUNMIS1: null, ARUNMIS2:null}})
@@ -210,6 +212,10 @@ const CreateDocument = () => {
 
     const addRowHandler = (e) => {
         e.preventDefault();
+        if(!isTestataSave){
+            alert("Conferma Testata");
+            return;
+        }
         if (formData.codart === '') {
             alert('Inserisci Articolo')
             return
@@ -227,8 +233,8 @@ const CreateDocument = () => {
         setRows(prevRows => [...prevRows, newRecord]);
         alert("Riga Aggiunta")
         resetByUpdate();
-        if (rows.length === 0)
-            setIsTestataSave(true)
+        // if (rows.length === 0)
+        //     setIsTestataSave(true)
         if(cards.current) {
             // Usa il metodo scrollIntoView() per scorrere fino al form
             cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -260,6 +266,8 @@ const CreateDocument = () => {
             codart: rowByUpdate.codart,
             desc: rowByUpdate.desc,
             unimis: rowByUpdate.unimis,
+            magpar: rowByUpdate.magpar,
+            magdes: rowByUpdate.magdes
         })
         if(formRef.current) {
             // Usa il metodo scrollIntoView() per scorrere fino al form
@@ -271,6 +279,7 @@ const CreateDocument = () => {
         let msg = "";
         if(currentMat.length>0 && formData.codmat===''){msg="Inserisci una matricola"}
         else if(formData.magpar===""){msg="Inserisci magazzino origine"}
+        else if(hasCauCol && formData.magdes===''){msg="Inserisci magazzino destinazione"}
         else if(formData.unimis===""){msg="Inserisci unità di misura"}
         return msg;
     }
@@ -292,6 +301,8 @@ const CreateDocument = () => {
                         desc: formData.desc,
                         matricole: currentMat,
                         unimis: formData.unimis,
+                        magpar: formData.magpar,
+                        magdes: formData.magdes
                     };
                 }
                 // Altrimenti, lascia l'elemento invariato
