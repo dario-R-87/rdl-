@@ -98,7 +98,7 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                     </Form>}
                     {/*artsFiltered.length>0 && */}
                 {!loading && artsFiltered.length===0 && <div className='text-center mt-3'>La ricerca non ha prodotto risultati!</div>}
-                {!loading && artsFiltered.map((articolo) => (
+                {!loading && artsFiltered.slice(1, artsFiltered.length > 50 ? 50 : undefined).map((articolo) => (
                     <Card className="mt-2" key={articolo.CACODICE} onClick={() => selectArticolo(articolo.CACODART)} style={{ cursor: 'pointer' }}>
                         <Card.Body>
                             <Card.Title>{articolo.CACODART}</Card.Title>

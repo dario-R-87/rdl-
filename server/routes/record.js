@@ -136,6 +136,17 @@ recordRoutes.route("/causale_mag/:azienda/:causale_mag").get(function (req, res)
     });
 });
 
+recordRoutes.route("/users").get(function (req, res) {
+  db.query("SELECT CODE, NAME, PASSWD FROM dbo.CPUSERS")
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 recordRoutes.route("/aziende").get(function (req, res) {
   db.query("SELECT AZCODAZI, AZRAGAZI FROM dbo.AZIENDA")
     .then(result => {
