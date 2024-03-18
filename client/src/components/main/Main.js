@@ -14,7 +14,6 @@ const Main = () => {
         localStorage.removeItem("az_descri");
         localStorage.removeItem("user");
         localStorage.removeItem("username");
-        localStorage.removeItem("password");
         localStorage.setItem("isLogged","false");
         navigate("/");
     }
