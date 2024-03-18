@@ -7,6 +7,7 @@ const Main = () => {
     const navigate = useNavigate();
     const azienda = localStorage.getItem("az_descri")
     const username = localStorage.getItem("username")
+    const isLogged = localStorage.getItem("isLogged");
 
     const onLogout = () => {
         localStorage.removeItem("azienda");
@@ -14,10 +15,14 @@ const Main = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("username");
         localStorage.removeItem("password");
-        localStorage.clear();
-        window.location.reload();
+        localStorage.setItem("isLogged","false");
         navigate("/");
     }
+
+    useEffect(()=>{
+        if(isLogged!=="true")
+            navigate("/");
+    },[])
 
     return (
         <> 

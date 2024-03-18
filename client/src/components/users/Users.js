@@ -12,7 +12,7 @@ const Users = ({ onLoadUsers }) => {
             let records = await response.json();
             onLoadUsers(records)
         } catch (error) {
-            alert(error.message);
+            return;
         }
     };
 

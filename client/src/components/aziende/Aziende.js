@@ -12,7 +12,7 @@ const Aziende = ({onLoadAz}) => {
             let records = await response.json();
             onLoadAz(records)
         } catch (error) {
-            alert(error.message);
+            return;
         }
     };
 

@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {Button, Form, Container} from 'react-bootstrap';
-import Aziende from '../aziende/Aziende';
 import { useNavigate } from 'react-router-dom';
-import Users from '../users/Users';
-
 
 const Login = () => {
     const navigate = useNavigate();
-    //const [aziendaLogin, setAziendaLogin] = useState("");
     const [loginData, setLoginData] = useState({
         user: 0,
         password: "",
@@ -15,6 +11,44 @@ const Login = () => {
     })
     const [aziende, setAziende] = useState([]);
     const [users, setUsers] = useState([]);
+    const isLogged = localStorage.getItem("isLogged");
+
+    const getAziende = async () => {
+        try {
+            const response = await fetch(`http://192.168.1.29:5000/aziende`);
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            let records = await response.json();
+            setAziende(records)
+        } catch (error) {
+            return;
+        }
+    };
+
+    const getUsers = async () => {
+        try {
+            const response = await fetch(`http://192.168.1.29:5000/users`);
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            let records = await response.json();
+            setUsers(records)
+        } catch (error) {
+            return;
+        }
+    };
+
+    useEffect(()=>{
+        if(isLogged==="true")
+            navigate("/homepage");
+        getAziende();
+        getUsers();
+    },[])
 
     const handleChange = (e) => {
         const {name,value} = e.target;
@@ -22,10 +56,6 @@ const Login = () => {
             ...loginData,
             [name]: value,
         });
-    }
-
-    const handleAz = (records) => {
-        setAziende(records)
     }
 
     const handleSubmit = () => {
@@ -46,18 +76,15 @@ const Login = () => {
         localStorage.setItem("user", loginData.user);
         localStorage.setItem("username", username);
         localStorage.setItem("password", loginData.password);
+        localStorage.setItem("isLogged", "true");
 
         navigate("/homepage");
     }
 
-    const hanldeUsers = (users)=>{
-        setUsers(users);
-    }
-
     return (
         <Container className='mt-5 d-flex justify-content-center'>
-            <Aziende onLoadAz={handleAz} />
-            <Users onLoadUsers={hanldeUsers}/>
+            {/* <Aziende onLoadAz={handleAz} />
+            <Users onLoadUsers={hanldeUsers}/> */}
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="user">
                     <Form.Label className='custom-label mt-3'>Username</Form.Label>

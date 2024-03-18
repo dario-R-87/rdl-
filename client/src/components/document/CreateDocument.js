@@ -15,7 +15,6 @@ import Magazzini from '../magazzini/Magazzini';
 const CreateDocument = () => {
 
     const navigate = useNavigate();
-
     const getCurrentDate = () => {
         const today = new Date();
         const year = today.getFullYear();
@@ -23,7 +22,8 @@ const CreateDocument = () => {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
-
+    const azienda = localStorage.getItem("azienda")
+    const isLogged = localStorage.getItem("isLogged");
     const [formData, setFormData] = useState({
         tipdoc: '',
         datadoc: getCurrentDate(),
@@ -36,7 +36,6 @@ const CreateDocument = () => {
         search: '',
         desc: ''
     });
-    const azienda = localStorage.getItem("azienda")
     const [rows, setRows] = useState([]);
     const [isTestataSave, setIsTestataSave] = useState(false)
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
@@ -57,6 +56,11 @@ const CreateDocument = () => {
     const cards = useRef(null);
 
     const [aaa,setA]=useState(false);
+
+    useEffect(()=>{
+        if(isLogged!=="true")
+            navigate("/");
+    },[])
 
     useEffect(() => {
         async function getMaxSerial() {
