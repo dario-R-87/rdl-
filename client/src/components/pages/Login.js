@@ -2,37 +2,19 @@ import React, { useEffect, useState } from 'react'
 import {Button, Form, Container} from 'react-bootstrap';
 import Aziende from '../aziende/Aziende';
 import { useNavigate } from 'react-router-dom';
+import Users from '../users/Users';
 
 
 const Login = () => {
     const navigate = useNavigate();
     //const [aziendaLogin, setAziendaLogin] = useState("");
     const [loginData, setLoginData] = useState({
-        username: "",
+        user: 0,
         password: "",
         azienda: ""
     })
     const [aziende, setAziende] = useState([]);
     const [users, setUsers] = useState([]);
-    
-    const getUsers = async () => {
-        try {
-            const response = await fetch(`http://192.168.1.29:5000/users`);
-            if (!response.ok) {
-                const message = `An error occurred: ${response.statusText}`;
-                window.alert(message);
-                return;
-            }
-            const records = await response.json();
-            setUsers(records);
-        } catch (error) {
-            alert(error.message);
-        }
-    }
-
-    useEffect(()=>{
-        getUsers();
-    },[]);
 
     const handleChange = (e) => {
         const {name,value} = e.target;
@@ -52,25 +34,38 @@ const Login = () => {
             });
         const azDescri = azSel[0].AZRAGAZI;
 
+        const utSel = users.filter((item) => {
+            return (item.CODE == loginData.user)
+            });
+        const username = utSel[0].NAME;   
+
         // AUTENTICAZIONE
 
         localStorage.setItem("azienda", loginData.azienda);
         localStorage.setItem("az_descri", azDescri);
-        localStorage.setItem("username", loginData.username);
+        localStorage.setItem("user", loginData.user);
+        localStorage.setItem("username", username);
         localStorage.setItem("password", loginData.password);
 
         navigate("/homepage");
     }
 
+    const hanldeUsers = (users)=>{
+        setUsers(users);
+    }
+
     return (
         <Container className='mt-5 d-flex justify-content-center'>
             <Aziende onLoadAz={handleAz} />
+            <Users onLoadUsers={hanldeUsers}/>
             <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="username">
+                <Form.Group controlId="user">
                     <Form.Label className='custom-label mt-3'>Username</Form.Label>
-                        <Form.Control required name="username" value={loginData.username} onChange={handleChange}>
+                        <Form.Control required as="select" name="user" value={loginData.user} onChange={handleChange}>
+                            <option value=""></option>
+                            {users.map((user)=> <option key={user.CODE} value={user.CODE}>{user.CODE+" - "+user.NAME}</option>)}
                         </Form.Control>
-                </Form.Group>
+                </Form.Group>                
                 <Form.Group controlId="password">
                     <Form.Label className='custom-label mt-3'>Password</Form.Label>
                         <Form.Control required type="password" name="password" value={loginData.password} onChange={handleChange}>
