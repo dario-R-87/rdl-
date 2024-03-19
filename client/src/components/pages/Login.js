@@ -108,11 +108,11 @@ const Login = () => {
                         {users.map((user) => <option key={user.CODE} value={user.CODE}>{user.CODE + " - " + user.NAME}</option>)}
                     </Form.Control>
                 </Form.Group>
-                <Form.Group controlId="password">
+                {/* <Form.Group controlId="password">
                     <Form.Label className='custom-label mt-3'>Password</Form.Label>
                     <Form.Control required type="password" name="password" value={loginData.password} onChange={handleChange}>
                     </Form.Control>
-                </Form.Group>
+                </Form.Group> */}
                 <Form.Group controlId="azienda">
                     <Form.Label className='custom-label mt-3'>Azienda</Form.Label>
                     <Form.Control required as="select" name="azienda" value={loginData.azienda} onChange={handleChange}>

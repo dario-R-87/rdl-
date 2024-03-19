@@ -180,21 +180,23 @@ const CreateDocument = () => {
             }
             const artData = await response.json();
             setCurrentArt({...selected, data: artData[0]})
+            return artData[0];
         } catch (error) {
             alert(error.message);
         }
     }
 
     const onArtSelect = async (selected) => {
+        const artData = await getArtData(selected)
+        console.log(artData.ARUNMIS1)
         setFormData({
             ...formData,
             codart: selected.CACODART,
             desc: selected.CADESART,
             search: "",
             codmat: '',
-            unimis: '',
+            unimis: artData.ARUNMIS1,
         })
-        getArtData(selected)
     }
 
     const resetByUpdate = () => {
@@ -206,8 +208,8 @@ const CreateDocument = () => {
             desc: '',
             search: '',
             unimis: '',
-            magpar: '',
-            magdes: ''
+            magpar: rows.length>0 ? rows[0].magpar : '',
+            magdes: rows.length>0 ? rows[0].magdes : '',
         });
         setUpdate({ ...update, updating: false, rownum: 0 })
         setCurrentArt({CACODART:"", data:{ARGESMAT:"N", ARUNMIS1: null, ARUNMIS2:null}})
@@ -230,7 +232,7 @@ const CreateDocument = () => {
             insuser: '690a10eb6bd3636a',
             rownum: (rows.length + 1) * 10,
             matricole: currentMat,
-            unimis: formData.unimis,
+            // unimis: formData.unimis,
             unimis1: currentArt.data.ARUNMIS1,
             unimis2: currentArt.data.ARUNMIS2,
         }
@@ -328,14 +330,14 @@ const CreateDocument = () => {
         setMag(records);
     }
 
-    const test=()=>{
-        console.log(hasCauCol)
-        setA(!aaa)
-    }
+    // const test=()=>{
+    //     console.log(currentArt)
+    //     setA(!aaa)
+    // }
 
     return (
         <Container className='mt-3'>
-            <button onClick={test}>test</button>
+            {/* <button onClick={test}>test</button> */}
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
             <Magazzini onLoadMag={handleMag}/>
