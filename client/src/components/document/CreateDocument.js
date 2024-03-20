@@ -208,8 +208,8 @@ const CreateDocument = () => {
             desc: '',
             search: '',
             unimis: '',
-            magpar: rows.length>0 ? rows[0].magpar : '',
-            magdes: rows.length>0 ? rows[0].magdes : '',
+            magpar: rows.length>0 ? rows[0].magpar : formData.magpar,
+            magdes: rows.length>0 ? rows[0].magdes : formData.magdes,
         });
         setUpdate({ ...update, updating: false, rownum: 0 })
         setCurrentArt({CACODART:"", data:{ARGESMAT:"N", ARUNMIS1: null, ARUNMIS2:null}})
@@ -350,7 +350,6 @@ const CreateDocument = () => {
                     <Form.Label className='custom-label mt-3'>Tipo Documento</Form.Label>
                     <Form.Control required as="select" name="tipdoc" value={formData.tipdoc} onChange={handleChange} disabled={isTestataSave}>
                         <option value=""></option>
-                        <option value="AAAAA">AAAAA</option>
                         {docType.map((type)=> <option key={type.TDTIPDOC} value={type.TDTIPDOC}>{type.TDDESDOC}</option>)}
                     </Form.Control>
                 </Form.Group>
