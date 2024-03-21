@@ -275,12 +275,15 @@ const CreateDocument = () => {
     }
 
     const onDelete = (rownum) => {
-        // Filtra gli elementi escludendo quello con rownum uguale a rownumToDelete
-        const updatedRows = rows.filter(row => row.rownum !== rownum);
-        // Aggiorna lo stato con il nuovo array di elementi
-        setRows(updatedRows);
-        resetByUpdate();
-        alert("Riga eliminata");
+        const conferma = window.confirm("Sei sicuro di voler elimiare la riga?");
+        if(conferma){
+            // Filtra gli elementi escludendo quello con rownum uguale a rownumToDelete
+            const updatedRows = rows.filter(row => row.rownum !== rownum);
+            // Aggiorna lo stato con il nuovo array di elementi
+            setRows(updatedRows);
+            resetByUpdate();
+            alert("Riga eliminata");
+        }    
     }
 
     const onUpdate = (rownum) => {
@@ -364,7 +367,7 @@ const CreateDocument = () => {
 
     return (
         <Container className='mt-3'>
-            <button onClick={test}>test</button>
+            {/* <button onClick={test}>test</button> */}
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
             <Magazzini onLoadMag={handleMag}/>

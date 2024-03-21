@@ -138,7 +138,7 @@ recordRoutes.route("/causale_mag/:azienda/:causale_mag").get(function (req, res)
 });
 
 recordRoutes.route("/users").get(function (req, res) {
-  db.query("SELECT CODE, NAME, PASSWD FROM dbo.CPUSERS")
+  db.query("SELECT CODE, NAME, PASSWD FROM dbo.CPUSERS WHERE webtype='S'")
     .then(result => {
       res.json(result);
     })
