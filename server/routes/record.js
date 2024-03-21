@@ -158,4 +158,17 @@ recordRoutes.route("/aziende").get(function (req, res) {
     });
 });
 
+recordRoutes.route("/clienti/:azienda").get(function (req, res) {
+  const azienda = req.params.azienda;
+  db.query(`SELECT ANTIPCON, ANCODICE, ANDESCRI,ANDESCR2, ANDTOBSO FROM dbo.${azienda}CONTI
+  WHERE ANTIPCON='C' AND (ANDTOBSO IS NULL OR ANDTOBSO > GETDATE())`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 module.exports = recordRoutes;
