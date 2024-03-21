@@ -10,6 +10,7 @@ import "./document.css"
 import Matricole from '../matricole/Matricole';
 import DocType from './DocType';
 import Magazzini from '../magazzini/Magazzini';
+import Clienti from '../clienti/Clienti';
 
 
 const CreateDocument = () => {
@@ -27,20 +28,24 @@ const CreateDocument = () => {
     const [formData, setFormData] = useState({
         tipdoc: '',
         datadoc: getCurrentDate(),
+        codcli: '',
         codart: '',
         unimis: '',
         quanti: 1,
         codmat: '',
         magpar: '',
         magdes: '',
+        clientSearch: '',
         search: '',
-        desc: ''
+        clientDesc: '',
+        desc: '',
     });
     const [rows, setRows] = useState([]);
     const [isTestataSave, setIsTestataSave] = useState(false)
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
     const [newSerial, setNewSerial] = useState('0000000001')
     const [show, setShow] = useState(false);
+    const [clientShow, setClientShow] = useState(false);
     const [currentArt, setCurrentArt] = useState({
         CACODART:"", 
         data:{
@@ -138,12 +143,21 @@ const CreateDocument = () => {
     };
 
     const salvaTestata = () => {
-        if(formData.datadoc!=="" && formData.tipdoc!==""){
-            setIsTestataSave(true)
-            handleCauCol()    
+        if(!formData.tipdoc.includes("DDT")){
+            if(formData.datadoc!=="" && formData.tipdoc!==""){
+                setIsTestataSave(true)
+                handleCauCol()    
+            }
+            else
+                alert("Inserire tipo e data documento!")
+        } else {
+            if(formData.datadoc!=="" && formData.tipdoc!=="" && formData.codcli!==""){
+                setIsTestataSave(true)
+                handleCauCol()    
+            }
+            else
+                alert("Inserire tipo, data documento e cliente!")
         }
-        else
-            alert("Inserire tipo e data documento!")
     }
 
     const handleCauCol = async() => {
@@ -164,6 +178,10 @@ const CreateDocument = () => {
 
     const artHandler = () => {
         setShow(!show)
+    }
+
+    const cliHandler = () => {
+        setClientShow(!clientShow)
     }
 
     const hanldeMat = (matricole)=>{
@@ -198,6 +216,15 @@ const CreateDocument = () => {
             unimis: artData.ARUNMIS1,
         })
     }
+
+    const onCliSelect = async (selected) => {
+        setFormData({
+            ...formData,
+            codcli: selected.ANCODICE,
+            clientDesc: selected.ANDESCRI,
+            clientSearch: '',
+        })
+    }    
 
     const resetByUpdate = () => {
         setFormData({
@@ -330,14 +357,14 @@ const CreateDocument = () => {
         setMag(records);
     }
 
-    // const test=()=>{
-    //     console.log(currentArt)
-    //     setA(!aaa)
-    // }
+    const test=()=>{
+        console.log(clientShow)
+        setA(!aaa)
+    }
 
     return (
         <Container className='mt-3'>
-            {/* <button onClick={test}>test</button> */}
+            <button onClick={test}>test</button>
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
             <Magazzini onLoadMag={handleMag}/>
@@ -358,6 +385,30 @@ const CreateDocument = () => {
                     <Form.Label className='custom-label mt-3'>Data Documento</Form.Label>
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled={isTestataSave} />
                 </Form.Group>
+
+                {formData.tipdoc.includes('DDT') && <Form.Group controlId="codcli">
+                    <Form.Label className='custom-label mt-3'>Cliente</Form.Label>
+                    <div className={`d-flex ${isTestataSave ? 'd-none' : ''}`}>
+                        <Form.Control
+                            className={update.updating ? 'update-input' : ''}
+                            placeholder="Cerca..."
+                            type="text"
+                            name="clientSearch"
+                            value={formData.clientSearch}
+                            onChange={handleChange}
+                        />
+                        <Button onClick={cliHandler}><FontAwesomeIcon icon={faSearch} /></Button>
+                    </div>
+                    <Form.Control
+                        placeholder="Codice"
+                        required type="text"
+                        name="codcli"
+                        defaultValue={formData.codcli}
+                        disabled
+                    />
+                    <Form.Control placeholder="Descrizione" type="text" name="clientDesc" defaultValue={formData.clientDesc} readOnly disabled />
+                    {clientShow && <Clienti clientShow={clientShow} handleClientClose={cliHandler} handleClientSelected={onCliSelect} clientSearchValue={formData.clientSearch}></Clienti>}
+                </Form.Group>}   
 
                 {!isTestataSave && <div>
                     <Button className="mt-3" variant="success" onClick={salvaTestata}>

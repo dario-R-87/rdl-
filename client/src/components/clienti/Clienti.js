@@ -36,7 +36,7 @@ const Clienti = ({ clientShow, handleClientClose, handleClientSelected, clientSe
     const getClients = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://192.168.1.29:5000/clients/${azienda}`);
+            const response = await fetch(`http://192.168.1.29:5000/clienti/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -71,7 +71,7 @@ const Clienti = ({ clientShow, handleClientClose, handleClientSelected, clientSe
     };
 
     return (<>
-        <Modal clientShow={clientShow} onHide={handleClientClose}>
+        <Modal show={clientShow} onHide={handleClientClose}>
 
             <Modal.Header closeButton>
                 <Modal.Title>Seleziona un Cliente</Modal.Title>
@@ -88,7 +88,7 @@ const Clienti = ({ clientShow, handleClientClose, handleClientSelected, clientSe
                         </Form.Group>
                     </Form>}
                 {!loading && clientsFiltered.length===0 && <div className='text-center mt-3'>La ricerca non ha prodotto risultati!</div>}
-                {!loading && clientsFiltered.slice(1, clientsFiltered.length > 50 ? 50 : undefined).map((cliente) => (
+                {!loading && clientsFiltered.slice(0, clientsFiltered.length > 50 ? 50 : undefined).map((cliente) => (
                     <Card className="mt-2" key={cliente.ANCODICE} onClick={() => selectClient(cliente.ANCODICE)} style={{ cursor: 'pointer' }}>
                         <Card.Body>
                             <Card.Title>{cliente.ANCODICE}</Card.Title>
