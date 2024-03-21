@@ -24,8 +24,8 @@ const Main = () => {
     },[])
 
     return (
-        <> 
-            <div className='p-3 d-flex justify-content-between'>
+        <Container className='my-5 py-3'> 
+            <div className='mt-3 p-3 d-flex justify-content-between'>
                 <div>
                     <h3>{azienda}</h3>
                     <h4 className='text-success'>{username}</h4>
@@ -37,7 +37,7 @@ const Main = () => {
             <Container className='mt-5 d-flex justify-content-center'>
                 <Link to="/nuovo"><Button>Nuovo Documento</Button></Link>
             </Container>
-        </>
+        </Container>
     );
 }
 

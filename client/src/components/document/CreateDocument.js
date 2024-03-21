@@ -366,7 +366,7 @@ const CreateDocument = () => {
     }
 
     return (
-        <Container className='mt-3'>
+        <Container className='my-3 pb-5'>
             {/* <button onClick={test}>test</button> */}
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
