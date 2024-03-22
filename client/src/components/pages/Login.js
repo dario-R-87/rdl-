@@ -82,7 +82,7 @@ const Login = () => {
     //         localStorage.removeItem("loginTime");
     //         // Reindirizza l'utente alla pagina di login
     //         window.location.href = "/"; // Cambia questo URL con l'URL della tua pagina di login
-    //     }, 1 * 60 * 1000); // Tempo in millisecondi (30 minuti)
+    //     }, 1 * 60 * 1000);
     // };
 
     const handleSubmit = () => {

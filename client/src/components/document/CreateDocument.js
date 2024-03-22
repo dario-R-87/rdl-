@@ -12,6 +12,7 @@ import Magazzini from '../magazzini/Magazzini';
 import Clienti from '../clienti/Clienti';
 import md5 from 'crypto-js/md5';
 import Logout from '../pages/Logout';
+import TimerRefresh from '../timerRefresh/TimerRefresh';
 
 const CreateDocument = () => {
 
@@ -381,6 +382,7 @@ const CreateDocument = () => {
         <Container className='my-5 py-5'>
             {/* <button onClick={test}>test</button> */}
             <Logout />
+            <TimerRefresh />
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
             <Magazzini onLoadMag={handleMag}/>
