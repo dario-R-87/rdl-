@@ -3,7 +3,6 @@ import { Form, Button, Container } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import RowsList from './RowsList';
-import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import Articoli from '../articoli/Articoli';
 import "./document.css"
@@ -11,6 +10,8 @@ import Matricole from '../matricole/Matricole';
 import DocType from './DocType';
 import Magazzini from '../magazzini/Magazzini';
 import Clienti from '../clienti/Clienti';
+import md5 from 'crypto-js/md5';
+
 
 
 const CreateDocument = () => {
@@ -24,6 +25,7 @@ const CreateDocument = () => {
         return `${year}-${month}-${day}`;
     };
     const azienda = localStorage.getItem("azienda")
+    const username = localStorage.getItem("username");
     const isLogged = localStorage.getItem("isLogged");
     const [formData, setFormData] = useState({
         tipdoc: '',
@@ -59,7 +61,6 @@ const CreateDocument = () => {
     const [hasCauCol, setHasCauCol] = useState(false);
     const formRef = useRef(null);
     const cards = useRef(null);
-
     const [aaa,setA]=useState(false);
 
     useEffect(()=>{
@@ -120,6 +121,11 @@ const CreateDocument = () => {
                 alert("Nessura riga inserita");
             else {
                 try {
+                    let currentRowNum = 10;
+                    rows.forEach((row)=>{
+                        row.rownum = currentRowNum;
+                        currentRowNum += 10;
+                    });
                     await Promise.all(rows.map(postData)); // Esegue tutte le richieste in parallelo
                     // Se tutte le richieste sono state completate con successo
                     setFormData({
@@ -256,7 +262,7 @@ const CreateDocument = () => {
         const newRecord = {
             ...formData,
             serial: newSerial,
-            insuser: '690a10eb6bd3636a',
+            insuser: md5(username).toString().substring(0, 20),
             rownum: (rows.length + 1) * 10,
             matricole: currentMat,
             // unimis: formData.unimis,
@@ -360,19 +366,27 @@ const CreateDocument = () => {
         setMag(records);
     }
 
+    const onExit = () => {
+        const conferma = window.confirm("Se abbandoni la pagina perderai tutti i dati inseriti, confermi uscita?");
+        if(conferma){
+            navigate('/homepage');
+        }
+    }
+
     const test=()=>{
         console.log(clientShow)
         setA(!aaa)
     }
 
     return (
-        <Container className='my-3 pb-5'>
+        <Container className='my-5 py-5'>
             {/* <button onClick={test}>test</button> */}
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
             <Magazzini onLoadMag={handleMag}/>
             <div className='my-3 d-flex justify-content-between'>
-                <Link to="/homepage"><Button variant='secondary'>Home</Button></Link>
+                {/* <Link to="/homepage"><Button variant='secondary'>Home</Button></Link> */}
+                <Button variant='secondary' onClick={onExit}>Home</Button>
                 <h2>Nuovo Documento</h2>
             </div>
             <Form onSubmit={addRowHandler}>

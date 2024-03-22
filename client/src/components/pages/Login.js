@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-
 // Importa la libreria md5.js
-import md5 from 'crypto-js/md5';
-
-
+// import md5 from 'crypto-js/md5';
 
 const Login = () => {
 
     // Funzione per calcolare l'hash MD5 di una stringa
-    function calculateMD5(inputString) {
-        return md5(inputString).toString();
-    }
+    // function calculateMD5(inputString) {
+    //     return md5(inputString).toString();
+    // }
 
     // Utilizzo della funzione
-    const myString = "Hello, World!";
-    const md5Hash = calculateMD5("dario123");
-    console.log("MD5 hash:", md5Hash);
+    // const myString = "Hello, World!";
+    // const md5Hash = calculateMD5("dario123");
+    // console.log("MD5 hash:", md5Hash);
 
     const navigate = useNavigate();
     const [loginData, setLoginData] = useState({

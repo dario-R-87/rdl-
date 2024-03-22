@@ -9,7 +9,7 @@ const RowsList = ({ rows, handleDelete, handleUpdate }) => {
     return (
         <div className='mt-3'>
             {rows.slice().reverse().map((row) => (
-                <Card key={nanoid()} className="mb-3 bg-primary text-white">
+                <Card key={nanoid()} className="mb-3 bg-secondary text-white">
                     <Card.Body>
                         <div className='text-dark'><strong>RIGA {row.rownum}</strong></div>
                         <div className="d-flex justify-content-between align-items-center">
