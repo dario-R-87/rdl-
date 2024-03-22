@@ -2,6 +2,7 @@ import Container from 'react-bootstrap/Container';
 import {Button} from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
+import Logout from '../pages/Logout';
 
 const Main = () => {
     const navigate = useNavigate();
@@ -14,7 +15,9 @@ const Main = () => {
         localStorage.removeItem("az_descri");
         localStorage.removeItem("user");
         localStorage.removeItem("username");
+        localStorage.removeItem("loginTime");             
         localStorage.setItem("isLogged","false");
+
         navigate("/");
     }
 
@@ -37,6 +40,7 @@ const Main = () => {
             <Container className='mt-5 d-flex justify-content-center'>
                 <Link to="/nuovo"><Button>Nuovo Documento</Button></Link>
             </Container>
+            <Logout />
         </Container>
     );
 }

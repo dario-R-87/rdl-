@@ -11,8 +11,7 @@ import DocType from './DocType';
 import Magazzini from '../magazzini/Magazzini';
 import Clienti from '../clienti/Clienti';
 import md5 from 'crypto-js/md5';
-
-
+import Logout from '../pages/Logout';
 
 const CreateDocument = () => {
 
@@ -381,6 +380,7 @@ const CreateDocument = () => {
     return (
         <Container className='my-5 py-5'>
             {/* <button onClick={test}>test</button> */}
+            <Logout />
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType onLoadDocType={handleDocType}/>
             <Magazzini onLoadMag={handleMag}/>

@@ -71,6 +71,20 @@ const Login = () => {
         });
     }
 
+    // const logoutAfterTime = () => {
+    //     setTimeout(() => {
+    //         // Rimuovi i dati di login dal localStorage
+    //         localStorage.removeItem("azienda");
+    //         localStorage.removeItem("az_descri");
+    //         localStorage.removeItem("user");
+    //         localStorage.removeItem("username");
+    //         localStorage.removeItem("isLogged");
+    //         localStorage.removeItem("loginTime");
+    //         // Reindirizza l'utente alla pagina di login
+    //         window.location.href = "/"; // Cambia questo URL con l'URL della tua pagina di login
+    //     }, 1 * 60 * 1000); // Tempo in millisecondi (30 minuti)
+    // };
+
     const handleSubmit = () => {
         const azSel = aziende.filter((item) => {
             return (item.AZCODAZI === loginData.azienda)
@@ -83,13 +97,14 @@ const Login = () => {
         const username = utSel[0].NAME;
 
         // AUTENTICAZIONE
+        const loginTime = new Date().getTime(); // Ottieni il timestamp dell'orario di accesso
 
         localStorage.setItem("azienda", loginData.azienda);
         localStorage.setItem("az_descri", azDescri);
         localStorage.setItem("user", loginData.user);
         localStorage.setItem("username", username);
         localStorage.setItem("isLogged", "true");
-
+        localStorage.setItem("loginTime", loginTime);
         navigate("/homepage");
     }
 
