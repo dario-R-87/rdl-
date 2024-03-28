@@ -8,6 +8,7 @@ import Homepage from "./components/pages/Homepage";
 import Login from "./components/pages/Login"
 import ErrorPage from "./components/pages/ErrorPage";
 import Footer from "./components/Footer";
+import Documents from "./components/document/Documents";
 
  const App = () => {
  return (
@@ -17,6 +18,7 @@ import Footer from "./components/Footer";
         <Route exact path="/" element={<Login />} />
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/nuovo" element={<CreateDocument />} />
+        <Route path='/documenti' element={<Documents />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
      <Footer />

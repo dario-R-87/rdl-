@@ -37,8 +37,9 @@ const Main = () => {
                     <a onClick={onLogout} href="">logout</a>
                 </div>
             </div>
-            <Container className='mt-5 d-flex justify-content-center'>
+            <Container className='mt-5 d-flex flex-column align-items-center gap-3'>
                 <Link to="/nuovo"><Button>Nuovo Documento</Button></Link>
+                <Link to="/documenti"><Button>Visualizza Documenti</Button></Link>
             </Container>
             <Logout />
         </Container>
