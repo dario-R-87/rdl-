@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import RowsList from './RowsList';
 import { useNavigate } from 'react-router-dom';
 import Articoli from '../articoli/Articoli';
 import "./document.css"
@@ -13,23 +12,18 @@ import Clienti from '../clienti/Clienti';
 import md5 from 'crypto-js/md5';
 import Logout from '../pages/Logout';
 import TimerRefresh from '../timerRefresh/TimerRefresh';
+import DocRows from './DocRows';
+import { formatISO } from 'date-fns';
+
 
 const DocDett = ({serial}) => {
   const navigate = useNavigate();
-  const getCurrentDate = () => {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0'); // aggiungi 1 perchè i mesi iniziano da 0
-      const day = String(today.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-  };
   const azienda = localStorage.getItem("azienda")
   const username = localStorage.getItem("username");
   const isLogged = localStorage.getItem("isLogged");
   const [formData, setFormData] = useState({
       tipdoc: '',
-      datadoc: getCurrentDate(),
-      codcli: '',
+      datadoc: '',
       codart: '',
       unimis: '',
       quanti: 1,
@@ -40,11 +34,10 @@ const DocDett = ({serial}) => {
       search: '',
       clientDesc: '',
       desc: '',
+      codcli: '',
   });
   const [rows, setRows] = useState([]);
-  const [isTestataSave, setIsTestataSave] = useState(false)
   const [update, setUpdate] = useState({ updating: false, rownum: 0 })
-  const [newSerial, setNewSerial] = useState('0000000001')
   const [show, setShow] = useState(false);
   const [clientShow, setClientShow] = useState(false);
   const [currentArt, setCurrentArt] = useState({
@@ -62,30 +55,49 @@ const DocDett = ({serial}) => {
   const cards = useRef(null);
   const [aaa,setA]=useState(false);
 
-  useEffect(()=>{
-      if(isLogged!=="true")
-          navigate("/");
-  },[])
+  const setTestata = async (record) => {
+    try {
+        const response = await fetch(`http://192.168.1.29:5000/clienti/${azienda}/${record.ZUCODCLI}`);
+        if (!response.ok) {
+            const message = `An error occurred: ${response.statusText}`;
+            window.alert(message);
+            return;
+        }
+        const client = await response.json();
+        const data=formatISO(new Date(record.DATDOC), { representation: 'date' });
+        setFormData({...formData, 
+            tipdoc: record.TIPDOC,
+            datadoc: data,
+            codcli: record.ZUCODCLI,
+            clientDesc: client[0].ANDESCRI})
+    } catch (error) {
+        alert(error.message);
+    }
+  }
 
-  useEffect(() => {
-      async function getMaxSerial() {
-          const response = await fetch(`http://192.168.1.29:5000/new_serial/${azienda}`);
+  const getDocument = async() => {
+      try {
+          const response = await fetch(`http://192.168.1.29:5000/documento/${azienda}/${serial}`);
           if (!response.ok) {
               const message = `An error occurred: ${response.statusText}`;
               window.alert(message);
               return;
           }
-          const json = await response.json();
-          if (json[0].MAX_SERIAL) {
-              const max_serial = parseInt(json[0].MAX_SERIAL, 10);
-              const newSerial = max_serial + 1;
-              const newSerialString = String(newSerial).padStart(10, '0');
-              setNewSerial(newSerialString);
-          }
+          const records = await response.json();
+          setRows(records)
+          setTestata(records[0]);
+      } catch (error) {
+          alert(error.message);
       }
-      getMaxSerial();
-      return;
-  }, [isTestataSave])
+  }
+
+    useEffect(() => {
+        if (isLogged !== "true")
+            navigate("/")
+        else {
+            getDocument();
+        }
+    }, []);
 
   const handleChange = (e) => {
       const { name, value } = e.target;
@@ -129,13 +141,12 @@ const DocDett = ({serial}) => {
                   // Se tutte le richieste sono state completate con successo
                   setFormData({
                       tipdoc: '',
-                      datadoc: getCurrentDate(),
+                      datadoc: '',
                       codart: '',
                       unimis: '',
                       quanti: 1,
                       codmat: '',
                   });
-                  setIsTestataSave(false);
                   setRows([]);
                   alert("Documento Creato!");
                   navigate('/documenti');
@@ -146,24 +157,6 @@ const DocDett = ({serial}) => {
           }
       }
   };
-
-  const salvaTestata = () => {
-      if(!formData.tipdoc.includes("DDT")){
-          if(formData.datadoc!=="" && formData.tipdoc!==""){
-              setIsTestataSave(true)
-              handleCauCol()    
-          }
-          else
-              alert("Inserire tipo e data documento!")
-      } else {
-          if(formData.datadoc!=="" && formData.tipdoc!=="" && formData.codcli!==""){
-              setIsTestataSave(true)
-              handleCauCol()    
-          }
-          else
-              alert("Inserire tipo, data documento e cliente!")
-      }
-  }
 
   const handleCauCol = async() => {
       try {
@@ -250,17 +243,12 @@ const DocDett = ({serial}) => {
 
   const addRowHandler = (e) => {
       e.preventDefault();
-      if(!isTestataSave){
-          alert("Conferma Testata");
-          return;
-      }
       if (formData.codart === '') {
           alert('Inserisci Articolo')
           return
       }
       const newRecord = {
           ...formData,
-          serial: newSerial,
           insuser: md5(username).toString().substring(0, 20),
           rownum: (rows.length + 1) * 10,
           matricole: currentMat,
@@ -271,8 +259,6 @@ const DocDett = ({serial}) => {
       setRows(prevRows => [...prevRows, newRecord]);
       alert("Riga Aggiunta")
       resetByUpdate();
-      // if (rows.length === 0)
-      //     setIsTestataSave(true)
       if(cards.current) {
           // Usa il metodo scrollIntoView() per scorrere fino al form
           cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -366,14 +352,14 @@ const DocDett = ({serial}) => {
   }
 
   const onExit = () => {
-      const conferma = window.confirm("Se abbandoni la pagina perderai tutti i dati inseriti, confermi uscita?");
-      if(conferma){
+    //   const conferma = window.confirm("Se abbandoni la pagina perderai tutti i dati inseriti, confermi uscita?");
+    //   if(conferma){
           navigate('/homepage');
-      }
+    //   }
   }
 
   const test=()=>{
-      console.log(clientShow)
+      console.log(formData)
       setA(!aaa)
   }
 
@@ -385,15 +371,15 @@ const DocDett = ({serial}) => {
           <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
           <DocType onLoadDocType={handleDocType}/>
           <Magazzini onLoadMag={handleMag}/>
-          <div className='my-3 d-flex justify-content-between'>
+          <div className='my-3 d-flex align-items-center justify-content-between'>
               {/* <Link to="/homepage"><Button variant='secondary'>Home</Button></Link> */}
-              <h2>Nuovo Documento</h2>
+              <h4>Documento N. {serial}</h4>
               <Button variant='secondary' onClick={onExit}>Home</Button>
           </div>
           <Form onSubmit={addRowHandler}>
               <Form.Group controlId="tipdoc">
                   <Form.Label className='custom-label mt-3'>Tipo Documento</Form.Label>
-                  <Form.Control required as="select" name="tipdoc" value={formData.tipdoc} onChange={handleChange} disabled={isTestataSave}>
+                  <Form.Control required as="select" name="tipdoc" value={formData.tipdoc} onChange={handleChange} disabled>
                       <option value=""></option>
                       {docType.map((type)=> <option key={type.TDTIPDOC} value={type.TDTIPDOC}>{type.TDDESDOC}</option>)}
                   </Form.Control>
@@ -401,22 +387,11 @@ const DocDett = ({serial}) => {
 
               <Form.Group controlId="datadoc">
                   <Form.Label className='custom-label mt-3'>Data Documento</Form.Label>
-                  <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled={isTestataSave} />
+                  <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled/>
               </Form.Group>
 
               {formData.tipdoc.includes('DDT') && <Form.Group controlId="codcli">
                   <Form.Label className='custom-label mt-3'>Cliente</Form.Label>
-                  <div className={`d-flex ${isTestataSave ? 'd-none' : ''}`}>
-                      <Form.Control
-                          className={update.updating ? 'update-input' : ''}
-                          placeholder="Cerca..."
-                          type="text"
-                          name="clientSearch"
-                          value={formData.clientSearch}
-                          onChange={handleChange}
-                      />
-                      <Button onClick={cliHandler}><FontAwesomeIcon icon={faSearch} /></Button>
-                  </div>
                   <Form.Control
                       placeholder="Codice"
                       required type="text"
@@ -428,11 +403,7 @@ const DocDett = ({serial}) => {
                   {clientShow && <Clienti clientShow={clientShow} handleClientClose={cliHandler} handleClientSelected={onCliSelect} clientSearchValue={formData.clientSearch}></Clienti>}
               </Form.Group>}   
 
-              {!isTestataSave && <div>
-                  <Button className="mt-3" variant="success" onClick={salvaTestata}>
-                      Conferma Testata
-                  </Button>
-              </div>}
+              <div ref={cards}><DocRows rows={rows} handleDelete={onDelete} handleUpdate={onUpdate} /></div>
 
               <div ref={formRef} className='text-center fw-bold text-danger mt-5'>
                   {update.updating ? `MODIFICA RIGA ${update.rownum}` : ''}
@@ -554,8 +525,6 @@ const DocDett = ({serial}) => {
                       Annulla
                   </Button>}
               </div>
-
-              <div ref={cards}><RowsList rows={rows} handleDelete={onDelete} handleUpdate={onUpdate} /></div>
           </Form>
       </Container>
   );

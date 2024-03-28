@@ -60,6 +60,20 @@ recordRoutes.route("/documenti/:azienda").get(function (req, res) {
     });
 });
 
+recordRoutes.route("/documento/:azienda/:serial").get(function (req, res) {
+  const azienda = req.params.azienda;
+  const serial = req.params.serial;
+
+  db.query(`SELECT * FROM dbo.${azienda}ZUAPPAHR WHERE SERIAL='${serial}'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 recordRoutes.route("/new_serial/:azienda").get(function (req, res) {
   const azienda = req.params.azienda;
   db.query(`SELECT MAX(SERIAL) AS MAX_SERIAL FROM dbo.${azienda}ZUAPPAHR`)
@@ -164,6 +178,20 @@ recordRoutes.route("/clienti/:azienda").get(function (req, res) {
   const azienda = req.params.azienda;
   db.query(`SELECT ANTIPCON, ANCODICE, ANDESCRI,ANDESCR2, ANDTOBSO FROM dbo.${azienda}CONTI
   WHERE ANTIPCON='C' AND (ANDTOBSO IS NULL OR ANDTOBSO > GETDATE())`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
+recordRoutes.route("/clienti/:azienda/:serial").get(function (req, res) {
+  const azienda = req.params.azienda;
+  const serial = req.params.serial;
+  db.query(`SELECT ANDESCRI FROM dbo.${azienda}CONTI WHERE 
+  ANTIPCON='C' AND ANCODICE='${serial}'`)
     .then(result => {
       res.json(result);
     })
