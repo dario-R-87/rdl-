@@ -1,6 +1,8 @@
 import React, { useEffect,useState } from 'react'
 import { Container, Table, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
+import { format, parse } from 'date-fns';
+import "./document.css"
 
 const Documents = () => {
     const navigate = useNavigate();
@@ -46,17 +48,18 @@ const Documents = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {documents.length===0 && <tr>
+                    {documents.length===0 ? 
+                    (<tr>
                         <td colSpan="4" style={{ fontWeight: 'bold', textAlign: 'center' }}>Nessun documento trovato!</td>
-                    </tr>}
-                    {documents.map((doc)=>                        
-                        (<tr>
-                            <td>1</td>
-                            <td>{doc.SERIAL}</td>
+                    </tr>) : 
+                    (documents.slice().reverse().map((doc, index)=>                        
+                        (<tr key={index}>
+                            <td>{index+1}</td>
+                            <td><a href={`/docdett/${doc.SERIAL}`}>{doc.SERIAL}</a></td>
                             <td>{doc.TIPDOC}</td>
-                            <td>{doc.DATDOC}</td>
+                            <td>{format(new Date(doc.DATDOC), 'dd/MM/yyyy')}</td>
                         </tr>)
-                    )}
+                    ))}
                 </tbody>
             </Table>
         </Container>

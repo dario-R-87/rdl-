@@ -139,7 +139,7 @@ const CreateDocument = () => {
                     setIsTestataSave(false);
                     setRows([]);
                     alert("Documento Creato!");
-                    navigate('/homepage');
+                    navigate('/documenti');
                 } catch (error) {
                     // Se una o più richieste hanno fallito, gestisci l'errore qui
                     window.alert(error.message);
@@ -388,8 +388,8 @@ const CreateDocument = () => {
             <Magazzini onLoadMag={handleMag}/>
             <div className='my-3 d-flex justify-content-between'>
                 {/* <Link to="/homepage"><Button variant='secondary'>Home</Button></Link> */}
-                <Button variant='secondary' onClick={onExit}>Home</Button>
                 <h2>Nuovo Documento</h2>
+                <Button variant='secondary' onClick={onExit}>Home</Button>
             </div>
             <Form onSubmit={addRowHandler}>
                 <Form.Group controlId="tipdoc">

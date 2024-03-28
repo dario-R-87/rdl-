@@ -9,6 +9,7 @@ import Login from "./components/pages/Login"
 import ErrorPage from "./components/pages/ErrorPage";
 import Footer from "./components/Footer";
 import Documents from "./components/document/Documents";
+import Details from "./components/pages/Details";
 
  const App = () => {
  return (
@@ -19,6 +20,7 @@ import Documents from "./components/document/Documents";
         <Route path="/homepage" element={<Homepage />} />
         <Route path="/nuovo" element={<CreateDocument />} />
         <Route path='/documenti' element={<Documents />} />
+        <Route path='/docdett/:serial' element={<Details />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
      <Footer />
