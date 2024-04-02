@@ -88,11 +88,20 @@ const DocDett = ({ serial }) => {
                 return;
             }
             const artData = await response.json();
+            const matResponse = await fetch(`http://192.168.1.29:5000/matricole/${azienda}/${row.codart}`);
+            if (!matResponse.ok) {
+                const message = `An error occurred: ${matResponse.statusText}`;
+                window.alert(message);
+                return;
+            }
+            let mats = await matResponse.json();
             return {
                 ...row,
                 desc: artData[0].ARDESART,
                 unimis1: artData[0].ARUNMIS1,
                 unimis2: artData[0].ARUNMIS2,
+                hasMat: artData[0].ARGESMAT==='S' ? true : false,
+                matricole: mats,
             }
         } catch (error) {
             alert(error.message);
