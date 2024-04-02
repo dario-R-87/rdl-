@@ -24,7 +24,7 @@ recordRoutes.route("/articoli/:azienda").get(function (req, res) {
 recordRoutes.route("/artsdata/:azienda/:serial").get(function (req, res) {
   const serial = req.params.serial;
   const azienda = req.params.azienda;
-  db.query(`SELECT ARGESMAT, ARUNMIS1, ARUNMIS2 FROM dbo.${azienda}ART_ICOL WHERE ARCODART='${serial}'`)
+  db.query(`SELECT ARGESMAT, ARUNMIS1, ARUNMIS2, ARDESART FROM dbo.${azienda}ART_ICOL WHERE ARCODART='${serial}'`)
     .then(result => {
       res.json(result);
     })
