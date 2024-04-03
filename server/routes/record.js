@@ -86,6 +86,19 @@ recordRoutes.route("/new_serial/:azienda").get(function (req, res) {
     });
 });
 
+recordRoutes.route("/record/delete/:azienda/:serial").delete(function (req, res) {
+  const azienda = req.params.azienda;
+  const serial = req.params.serial;
+  db.query(`DELETE FROM dbo.${azienda}ZUAPPAHR WHERE SERIAL='${serial}'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 // This section will help you create a new record.
 recordRoutes.route("/record/add/:azienda").post(function (req, res) {
   const azienda = req.params.azienda;
@@ -192,19 +205,6 @@ recordRoutes.route("/clienti/:azienda/:serial").get(function (req, res) {
   const serial = req.params.serial;
   db.query(`SELECT ANDESCRI FROM dbo.${azienda}CONTI WHERE 
   ANTIPCON='C' AND ANCODICE='${serial}'`)
-    .then(result => {
-      res.json(result);
-    })
-    .catch(err => {
-      console.error("Errore nel recupero dei dati:", err);
-      res.status(500).json({ error: "Errore nel recupero dei dati" });
-    });
-});
-
-recordRoutes.route("/record/delete/:azienda/:serial").delete(function (req, res) {
-  const azienda = req.params.azienda;
-  const serial = req.params.serial;
-  db.query(`DELETE FROM dbo.${azienda}ZUAPPAHR WHERE SERIAL='${serial}'`)
     .then(result => {
       res.json(result);
     })

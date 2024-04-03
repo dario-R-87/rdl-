@@ -143,7 +143,7 @@ const DocDett = ({ serial }) => {
                 return {
                     serial: item.SERIAL,
                     tipdoc: item.TIPDOC,
-                    datadoc: item.DATADOC,
+                    datadoc: item.DATDOC,
                     codart: item.CODART,
                     unimis: item.UNIMIS,
                     quanti: item.QUANTI,
@@ -234,7 +234,7 @@ const DocDett = ({ serial }) => {
                         codmat: '',
                     });
                     setRows([]);
-                    alert("Documento Creato!");
+                    alert("Documento Modificato!");
                     navigate('/documenti');
                 } catch (error) {
                     // Se una o più richieste hanno fallito, gestisci l'errore qui
@@ -416,7 +416,7 @@ const DocDett = ({ serial }) => {
                     return {
                         ...row,
                         codmat: formData.codmat,
-                        quanti: currentMat.length > 0 ? 1 : formData.quanti,
+                        quanti: currentMat.length > 0 ? 1 : parseInt(formData.quanti),
                         codart: formData.codart,
                         desc: formData.desc,
                         matricole: currentMat,
@@ -433,6 +433,10 @@ const DocDett = ({ serial }) => {
             // Resetta il formData
             resetByUpdate();
             alert("Riga Aggiornata");
+            if (cards.current) {
+                // Usa il metodo scrollIntoView() per scorrere fino al form
+                cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
         }
     }
 
@@ -452,7 +456,8 @@ const DocDett = ({ serial }) => {
     }
 
     const test = () => {
-        console.log(serial.length)
+        console.log(rows)
+        console.log("update row: "+update.rownum)
     }
 
     return (
