@@ -201,4 +201,17 @@ recordRoutes.route("/clienti/:azienda/:serial").get(function (req, res) {
     });
 });
 
+recordRoutes.route("/record/delete/:azienda/:serial").delete(function (req, res) {
+  const azienda = req.params.azienda;
+  const serial = req.params.serial;
+  db.query(`DELETE FROM dbo.${azienda}ZUAPPAHR WHERE SERIAL='${serial}'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 module.exports = recordRoutes;

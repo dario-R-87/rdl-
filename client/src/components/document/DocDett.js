@@ -53,9 +53,9 @@ const DocDett = ({ serial }) => {
     const [docType, setDocType] = useState([]);
     const [mag, setMag] = useState([]);
     const [hasCauCol, setHasCauCol] = useState(false);
+    const [loading, setLoading] = useState(true);
     const formRef = useRef(null);
     const cards = useRef(null);
-    const [loading, setLoading] = useState(true);
 
     const setTestata = async (record) => {
         try {
@@ -100,7 +100,7 @@ const DocDett = ({ serial }) => {
                 desc: artData[0].ARDESART,
                 unimis1: artData[0].ARUNMIS1,
                 unimis2: artData[0].ARUNMIS2,
-                hasMat: artData[0].ARGESMAT==='S' ? true : false,
+                hasMat: artData[0].ARGESMAT === 'S' ? true : false,
                 matricole: mats,
             }
         } catch (error) {
@@ -112,22 +112,22 @@ const DocDett = ({ serial }) => {
         const newRow = await getRowDetails(currentRow);
         setRows(prevRows => {
             return prevRows.map((row, index) => {
-              if (i === index) {
-                return newRow; // Sovrascrivi l'elemento all'indice specificato
-              } else {
-                return row; // Mantieni invariati gli altri elementi
-              }
+                if (i === index) {
+                    return newRow; // Sovrascrivi l'elemento all'indice specificato
+                } else {
+                    return row; // Mantieni invariati gli altri elementi
+                }
             });
         });
-        
+
         // return newRow
     }
 
     useEffect(() => {
-        rows.map(async(row, i) =>setRowDetails(row, i));
+        rows.map(async (row, i) => setRowDetails(row, i));
     }, [loading]);
 
-    useEffect(()=>{ handleCauCol();}, [formData.tipdoc]);
+    useEffect(() => { handleCauCol(); }, [formData.tipdoc]);
 
     const getDocument = async () => {
         try {
@@ -141,6 +141,7 @@ const DocDett = ({ serial }) => {
             //MAP DEI RECORD
             const formattedRecord = records.map((item) => {
                 return {
+                    serial: item.SERIAL,
                     tipdoc: item.TIPDOC,
                     datadoc: item.DATADOC,
                     codart: item.CODART,
@@ -208,13 +209,22 @@ const DocDett = ({ serial }) => {
                 alert("Nessura riga inserita");
             else {
                 try {
+                    const response = await fetch(`http://192.168.1.29:5000/record/delete/${azienda}/${serial}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    if (!response.ok) {
+                        throw new Error(`An error occurred: ${response.statusText}`);
+                    }
                     let currentRowNum = 10;
                     rows.forEach((row) => {
                         row.rownum = currentRowNum;
                         currentRowNum += 10;
                     });
                     await Promise.all(rows.map(postData)); // Esegue tutte le richieste in parallelo
-                    // Se tutte le richieste sono state completate con successo
+                    //Se tutte le richieste sono state completate con successo
                     setFormData({
                         tipdoc: '',
                         datadoc: '',
@@ -237,7 +247,7 @@ const DocDett = ({ serial }) => {
     const handleCauCol = async () => {
         try {
             const tipdoc = docType.filter((tp) => tp.TDTIPDOC.includes(formData.tipdoc));
-            if(tipdoc[0]){
+            if (tipdoc[0]) {
                 const response = await fetch(`http://192.168.1.29:5000/causale_mag/${azienda}/${tipdoc[0].TDCAUMAG}`);
                 if (!response.ok) {
                     const message = `An error occurred: ${response.statusText}`;
@@ -246,7 +256,7 @@ const DocDett = ({ serial }) => {
                 }
                 let records = await response.json();
                 setHasCauCol(records[0].CMCAUCOL ? true : false);
-        }
+            }
         } catch (error) {
             alert(error.message);
         }
@@ -328,6 +338,7 @@ const DocDett = ({ serial }) => {
         }
         const newRecord = {
             ...formData,
+            serial: serial,
             insuser: md5(username).toString().substring(0, 20),
             rownum: (rows.length + 1) * 10,
             matricole: currentMat,
@@ -441,7 +452,7 @@ const DocDett = ({ serial }) => {
     }
 
     const test = () => {
-        console.log(rows)
+        console.log(serial.length)
     }
 
     return (

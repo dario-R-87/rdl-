@@ -3,7 +3,13 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config({ path: "./config.env" });
 const port = process.env.PORT || 5000;
-app.use(cors());
+
+const corsOptions = {
+  origin: "*", // Specifica l'origine consentita, puoi anche specificare specifici domini invece di "*" per consentire solo da domini specifici
+  methods: "GET, POST, PUT, DELETE", // Specifica i metodi HTTP consentiti
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(require("./routes/record"));
 // get driver connection
