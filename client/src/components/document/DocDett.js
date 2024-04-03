@@ -184,6 +184,14 @@ const DocDett = ({ serial }) => {
         });
     };
 
+    const rownumRecalc = () => {
+        setRows(prevRows => {
+            return prevRows.map((row, index) => {
+                return {...row, rownum: (index+1)*10};
+            });
+        });
+    }
+
     const postData = async (row) => {
         try {
             const response = await fetch(`http://192.168.1.29:5000/record/add/${azienda}`, {
@@ -218,11 +226,12 @@ const DocDett = ({ serial }) => {
                     if (!response.ok) {
                         throw new Error(`An error occurred: ${response.statusText}`);
                     }
-                    let currentRowNum = 10;
-                    rows.forEach((row) => {
-                        row.rownum = currentRowNum;
-                        currentRowNum += 10;
-                    });
+                    // rownumRecalc();
+                    // let currentRowNum = 10;
+                    // rows.forEach((row) => {
+                    //     row.rownum = currentRowNum;
+                    //     currentRowNum += 10;
+                    // });
                     await Promise.all(rows.map(postData)); // Esegue tutte le richieste in parallelo
                     //Se tutte le richieste sono state completate con successo
                     setFormData({
@@ -349,6 +358,7 @@ const DocDett = ({ serial }) => {
         setRows(prevRows => [...prevRows, newRecord]);
         alert("Riga Aggiunta")
         resetByUpdate();
+        rownumRecalc();
         if (cards.current) {
             // Usa il metodo scrollIntoView() per scorrere fino al form
             cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -363,6 +373,7 @@ const DocDett = ({ serial }) => {
             // Aggiorna lo stato con il nuovo array di elementi
             setRows(updatedRows);
             resetByUpdate();
+            rownumRecalc();
             alert("Riga eliminata");
         }
     }
@@ -448,31 +459,30 @@ const DocDett = ({ serial }) => {
         setMag(records);
     }
 
-    const onExit = () => {
-        //   const conferma = window.confirm("Se abbandoni la pagina perderai tutti i dati inseriti, confermi uscita?");
-        //   if(conferma){
-        navigate('/homepage');
-        //   }
+    const onExit = (dest) => {
+        const conferma = window.confirm("Se abbandoni la pagina perderai le modifiche apportate, confermi uscita?");
+        if(conferma){
+            navigate(dest);
+        }
     }
 
     const test = () => {
         console.log(rows)
-        console.log("update row: "+update.rownum)
     }
 
     return (
         <Container className='my-5 py-5'>
-            <button onClick={test}>test</button>
+            {/* <button onClick={test}>test</button> */}
             <Logout />
             <TimerRefresh />
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat} />
             <DocType onLoadDocType={handleDocType} />
             <Magazzini onLoadMag={handleMag} />
             <div className='my-3 d-flex align-items-center justify-content-between'>
-                {/* <Link to="/homepage"><Button variant='secondary'>Home</Button></Link> */}
-                <h4>Documento N. {serial}</h4>
-                <Button variant='secondary' onClick={onExit}>Home</Button>
+                <Button variant='success' onClick={()=>{onExit("/documenti")}}>Indietro</Button>
+                <Button variant='secondary' onClick={()=>{onExit("/homepage")}}>Home</Button>
             </div>
+            <h4>Documento N. {serial}</h4>
             <Form onSubmit={addRowHandler}>
                 <Form.Group controlId="tipdoc">
                     <Form.Label className='custom-label mt-3'>Tipo Documento</Form.Label>

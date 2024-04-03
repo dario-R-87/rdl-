@@ -96,6 +96,14 @@ const CreateDocument = () => {
         });
     };
 
+    const rownumRecalc = () => {
+        setRows(prevRows => {
+            return prevRows.map((row, index) => {
+                return {...row, rownum: (index+1)*10};
+            });
+        });
+    }
+
     const postData = async (row) => {
         try {
             const response = await fetch(`http://192.168.1.29:5000/record/add/${azienda}`, {
@@ -121,11 +129,11 @@ const CreateDocument = () => {
                 alert("Nessura riga inserita");
             else {
                 try {
-                    let currentRowNum = 10;
-                    rows.forEach((row)=>{
-                        row.rownum = currentRowNum;
-                        currentRowNum += 10;
-                    });
+                    // let currentRowNum = 10;
+                    // rows.forEach((row)=>{
+                    //     row.rownum = currentRowNum;
+                    //     currentRowNum += 10;
+                    // });
                     await Promise.all(rows.map(postData)); // Esegue tutte le richieste in parallelo
                     // Se tutte le richieste sono state completate con successo
                     setFormData({
@@ -272,6 +280,7 @@ const CreateDocument = () => {
         setRows(prevRows => [...prevRows, newRecord]);
         alert("Riga Aggiunta")
         resetByUpdate();
+        rownumRecalc();
         // if (rows.length === 0)
         //     setIsTestataSave(true)
         if(cards.current) {
@@ -288,6 +297,7 @@ const CreateDocument = () => {
             // Aggiorna lo stato con il nuovo array di elementi
             setRows(updatedRows);
             resetByUpdate();
+            rownumRecalc();
             alert("Riga eliminata");
         }    
     }
