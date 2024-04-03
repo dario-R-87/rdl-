@@ -34,7 +34,6 @@ recordRoutes.route("/artsdata/:azienda/:serial").get(function (req, res) {
     });
 });
 
-
 recordRoutes.route("/matricole/:azienda/:serial").get(function (req, res) {
   const serial = req.params.serial;
   const azienda = req.params.azienda;
@@ -50,7 +49,7 @@ recordRoutes.route("/matricole/:azienda/:serial").get(function (req, res) {
 
 recordRoutes.route("/documenti/:azienda").get(function (req, res) {
   const azienda = req.params.azienda;
-  db.query(`SELECT SERIAL, TIPDOC, DATDOC, COUNT(*) FROM dbo.${azienda}ZUAPPAHR GROUP BY SERIAL, TIPDOC, DATDOC`)
+  db.query(`SELECT SERIAL, TIPDOC, DATDOC, COUNT(*) FROM dbo.${azienda}ZUAPPAHR WHERE (FLIMPO IS NULL) GROUP BY SERIAL, TIPDOC, DATDOC`)
     .then(result => {
       res.json(result);
     })

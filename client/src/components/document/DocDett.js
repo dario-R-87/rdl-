@@ -433,7 +433,8 @@ const DocDett = ({ serial }) => {
                         matricole: currentMat,
                         unimis: formData.unimis,
                         magpar: formData.magpar,
-                        magdes: formData.magdes
+                        magdes: formData.magdes,
+                        insuser: md5(username).toString().substring(0, 20),
                     };
                 }
                 // Altrimenti, lascia l'elemento invariato
