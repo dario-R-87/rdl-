@@ -30,7 +30,8 @@ const CreateDocument = () => {
     const [formData, setFormData] = useState({
         tipdoc: '',
         datadoc: getCurrentDate(),
-        codcli: '',
+        codcon: '',
+        tipcon: '',
         codart: '',
         unimis: '',
         quanti: 1,
@@ -143,6 +144,8 @@ const CreateDocument = () => {
                         unimis: '',
                         quanti: 1,
                         codmat: '',
+                        codcon: '',
+                        tipcon: '',
                     });
                     setIsTestataSave(false);
                     setRows([]);
@@ -165,7 +168,7 @@ const CreateDocument = () => {
             else
                 alert("Inserire tipo e data documento!")
         } else {
-            if(formData.datadoc!=="" && formData.tipdoc!=="" && formData.codcli!==""){
+            if(formData.datadoc!=="" && formData.tipdoc!=="" && formData.codcon!==""){
                 setIsTestataSave(true)
                 handleCauCol()    
             }
@@ -177,6 +180,7 @@ const CreateDocument = () => {
     const handleCauCol = async() => {
         try {
             const tipdoc = docType.filter((tp)=>tp.TDTIPDOC.includes(formData.tipdoc));
+            setFormData({...formData, tipcon: tipdoc[0].TDFLINTE});
             const response = await fetch(`http://192.168.1.29:5000/causale_mag/${azienda}/${tipdoc[0].TDCAUMAG}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
@@ -234,7 +238,7 @@ const CreateDocument = () => {
     const onCliSelect = async (selected) => {
         setFormData({
             ...formData,
-            codcli: selected.ANCODICE,
+            codcon: selected.ANCODICE,
             clientDesc: selected.ANDESCRI,
             clientSearch: '',
         })
@@ -376,11 +380,32 @@ const CreateDocument = () => {
         setMag(records);
     }
 
-    const getDocTypeInfo = (tipdoc) => {
-        const docTypeSel = docType.filter((item)=>{
-            return (tipdoc===item.TDTIPDOC)
-        })
-        return docTypeSel[0].TDFLINTE;
+    const hasClient = () => {
+        if(formData.tipdoc){
+            const docTypeSel = docType.filter((item)=>{
+                return (formData.tipdoc===item.TDTIPDOC)
+            })
+            if(docTypeSel[0].TDFLINTE==='C')
+                return true;
+            else
+               return false;
+        } else {
+            return false
+        }
+    }
+
+    const hasForn = () => {
+        if(formData.tipdoc){
+            const docTypeSel = docType.filter((item)=>{
+                return (formData.tipdoc===item.TDTIPDOC)
+            })
+            if(docTypeSel[0].TDFLINTE==='F')
+                return true;
+            else
+                return false;
+        } else {
+            return false
+        }
     }
 
     const onExit = () => {
@@ -391,7 +416,8 @@ const CreateDocument = () => {
     }
 
     const test=()=>{
-        console.log(getDocTypeInfo(formData.tipdoc));
+        console.log("client: "+hasClient());
+        console.log("forn: "+hasForn());
         setA(!aaa)
     }
 
@@ -422,8 +448,8 @@ const CreateDocument = () => {
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled={isTestataSave} />
                 </Form.Group>
 
-                {(formData.tipdoc && getDocTypeInfo(formData.tipdoc)==='C') && <Form.Group controlId="codcli">
-                    <Form.Label className='custom-label mt-3'>Cliente</Form.Label>
+                {(hasClient() || hasForn()) && <Form.Group controlId="codcon">
+                    <Form.Label className='custom-label mt-3'>{hasClient() ? "Cliente" : "Fornitore"}</Form.Label>
                     <div className={`d-flex ${isTestataSave ? 'd-none' : ''}`}>
                         <Form.Control
                             className={update.updating ? 'update-input' : ''}
@@ -438,15 +464,19 @@ const CreateDocument = () => {
                     <Form.Control
                         placeholder="Codice"
                         required type="text"
-                        name="codcli"
-                        defaultValue={formData.codcli}
+                        name="codcon"
+                        defaultValue={formData.codcon}
                         disabled
                     />
                     <Form.Control placeholder="Descrizione" type="text" name="clientDesc" defaultValue={formData.clientDesc} readOnly disabled />
-                    {clientShow && <Clienti clientShow={clientShow} handleClientClose={cliHandler} handleClientSelected={onCliSelect} clientSearchValue={formData.clientSearch}></Clienti>}
+                    {clientShow && <Clienti 
+                                        clientShow={clientShow} 
+                                        handleClientClose={cliHandler} 
+                                        handleClientSelected={onCliSelect} 
+                                        clientSearchValue={formData.clientSearch}
+                                        type={hasClient() ? "clienti" : "fornitori"}>
+                                    </Clienti>}
                 </Form.Group>}   
-
-                {(formData.tipdoc && getDocTypeInfo(formData.tipdoc)==='F') && <div>FORNITORE</div>}   
 
                 {!isTestataSave && <div>
                     <Button className="mt-3" variant="success" onClick={salvaTestata}>

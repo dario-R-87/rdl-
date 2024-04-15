@@ -35,7 +35,7 @@ const DocDett = ({ serial }) => {
         search: '',
         clientDesc: '',
         desc: '',
-        codcli: '',
+        codcon: '',
     });
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
@@ -58,21 +58,32 @@ const DocDett = ({ serial }) => {
     const cards = useRef(null);
 
     const setTestata = async (record) => {
+        let tipconParam = '';
+        if(record.ZUTIPCON==='C')
+            tipconParam = "clienti"
+        else if(record.ZUTIPCON==='F')
+            tipconParam = "fornitori"
+
         try {
-            const response = await fetch(`http://192.168.1.29:5000/clienti/${azienda}/${record.ZUCODCLI}`);
-            if (!response.ok) {
-                const message = `An error occurred: ${response.statusText}`;
-                window.alert(message);
-                return;
+            let clifor=null;
+            if(tipconParam!==''){
+                const response = await fetch(`http://192.168.1.29:5000/${tipconParam}/${azienda}/${record.ZUCODCON}`);
+
+                if (!response.ok) {
+                    const message = `An error occurred: ${response.statusText}`;
+                    window.alert(message);
+                    return;
+                }
+                clifor = await response.json();
             }
-            const client = await response.json();
             const data = formatISO(new Date(record.DATDOC), { representation: 'date' });
             setFormData({
                 ...formData,
                 tipdoc: record.TIPDOC,
                 datadoc: data,
-                codcli: record.ZUCODCLI,
-                clientDesc: client[0].ANDESCRI
+                codcon: record.ZUCODCON,
+                tipcon: record.ZUTIPCON,
+                clientDesc: clifor ? clifor[0].ANDESCRI : '',
             })
         } catch (error) {
             alert(error.message);
@@ -152,7 +163,8 @@ const DocDett = ({ serial }) => {
                     magdes: item.MAGDES,
                     insuser: item.INSUSER,
                     rownum: item.ROWNUM,
-                    codcli: item.ZUCODCLI,
+                    codcon: item.ZUCODCON,
+                    tipcon: item.ZUTIPCON,
                     // desc: '',
                     // matricole: [],
                     // unimis1: "",
@@ -316,7 +328,7 @@ const DocDett = ({ serial }) => {
     const onCliSelect = async (selected) => {
         setFormData({
             ...formData,
-            codcli: selected.ANCODICE,
+            codcon: selected.ANCODICE,
             clientDesc: selected.ANDESCRI,
             clientSearch: '',
         })
@@ -467,11 +479,32 @@ const DocDett = ({ serial }) => {
         }
     }
 
-    const getDocTypeInfo = (tipdoc) => {
-        const docTypeSel = docType.filter((item)=>{
-            return (tipdoc===item.TDTIPDOC)
-        })
-        return docTypeSel[0].TDFLINTE;
+    const hasClient = () => {
+        if(formData.tipdoc){
+            const docTypeSel = docType.filter((item)=>{
+                return (formData.tipdoc===item.TDTIPDOC)
+            })
+            if(docTypeSel[0].TDFLINTE==='C')
+                return true;
+            else
+               return false;
+        } else {
+            return false
+        }
+    }
+
+    const hasForn = () => {
+        if(formData.tipdoc){
+            const docTypeSel = docType.filter((item)=>{
+                return (formData.tipdoc===item.TDTIPDOC)
+            })
+            if(docTypeSel[0].TDFLINTE==='F')
+                return true;
+            else
+                return false;
+        } else {
+            return false
+        }
     }
 
     const test = () => {
@@ -505,21 +538,24 @@ const DocDett = ({ serial }) => {
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled />
                 </Form.Group>
 
-                {(formData.tipdoc && getDocTypeInfo(formData.tipdoc)==='C') && <Form.Group controlId="codcli">
-                    <Form.Label className='custom-label mt-3'>Cliente</Form.Label>
+                {(hasClient() || hasForn())  && <Form.Group controlId="codcon">
+                    <Form.Label className='custom-label mt-3'>{hasClient() ? "Cliente" : "Fornitore"}</Form.Label>
                     <Form.Control
                         placeholder="Codice"
                         required type="text"
-                        name="codcli"
-                        defaultValue={formData.codcli}
+                        name="codcon"
+                        defaultValue={formData.codcon}
                         disabled
                     />
                     <Form.Control placeholder="Descrizione" type="text" name="clientDesc" defaultValue={formData.clientDesc} readOnly disabled />
-                    {clientShow && <Clienti clientShow={clientShow} handleClientClose={cliHandler} handleClientSelected={onCliSelect} clientSearchValue={formData.clientSearch}></Clienti>}
+                    {clientShow && <Clienti 
+                                        clientShow={clientShow} 
+                                        handleClientClose={cliHandler} 
+                                        handleClientSelected={onCliSelect} 
+                                        clientSearchValue={formData.clientSearch}
+                                        type={hasClient() ? "clienti" : "fornitori"}>
+                                    </Clienti>}
                 </Form.Group>}
-
-                {(formData.tipdoc && getDocTypeInfo(formData.tipdoc)==='F') && <div>FORNITORE</div>}   
-
 
                 {!loading && <div ref={cards}><RowsList rows={rows} handleDelete={onDelete} handleUpdate={onUpdate} /></div>}
 

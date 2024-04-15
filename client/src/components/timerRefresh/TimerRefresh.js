@@ -7,7 +7,8 @@ const TimerRefresh = () => {
 
     function resetIdleTimer() {
         clearTimeout(idleTimer);
-        idleTimer = setTimeout(refreshPage, 30 * 60 * 1000); // 30 minuti
+        idleTimer = setTimeout(refreshPage, 60 * 60 * 1000); // 60 minuti
+        // console.log("timer resettato: ")
     }
 
     function refreshPage() {
@@ -18,7 +19,7 @@ const TimerRefresh = () => {
     resetIdleTimer();
 
     // Aggiungi gli eventi per reimpostare il timer quando l'utente interagisce con la pagina
-    //document.addEventListener('mousemove', resetIdleTimer);
+    document.addEventListener('click', resetIdleTimer);
     document.addEventListener('keypress', resetIdleTimer);
     }
 

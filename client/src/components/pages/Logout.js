@@ -10,7 +10,7 @@ const Logout = () => {
         if (loginTime) {
             const currentTime = new Date().getTime();
             const elapsedTime = currentTime - parseInt(loginTime);
-            const oneHour = 30 * 60 * 1000; // Un'ora in millisecondi
+            const oneHour = 60 * 60 * 1000; // Un'ora in millisecondi
             if (elapsedTime >= oneHour) {
                 localStorage.removeItem("azienda");
                 localStorage.removeItem("az_descri");
