@@ -170,7 +170,7 @@ const CreateDocument = () => {
                 handleCauCol()    
             }
             else
-                alert("Inserire tipo, data documento e cliente!")
+                alert("Inserire tipo, data documento e cliente/fornitore!")
         }
     }
 
@@ -376,6 +376,13 @@ const CreateDocument = () => {
         setMag(records);
     }
 
+    const getDocTypeInfo = (tipdoc) => {
+        const docTypeSel = docType.filter((item)=>{
+            return (tipdoc===item.TDTIPDOC)
+        })
+        return docTypeSel[0].TDFLINTE;
+    }
+
     const onExit = () => {
         const conferma = window.confirm("Se abbandoni la pagina perderai tutti i dati inseriti, confermi uscita?");
         if(conferma){
@@ -384,13 +391,13 @@ const CreateDocument = () => {
     }
 
     const test=()=>{
-        console.log(clientShow)
+        console.log(getDocTypeInfo(formData.tipdoc));
         setA(!aaa)
     }
 
     return (
         <Container className='my-5 py-5'>
-            {/* <button onClick={test}>test</button> */}
+            <button onClick={test}>test</button>
             <Logout />
             <TimerRefresh />
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
@@ -415,7 +422,7 @@ const CreateDocument = () => {
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled={isTestataSave} />
                 </Form.Group>
 
-                {formData.tipdoc.includes('DDT') && <Form.Group controlId="codcli">
+                {(formData.tipdoc && getDocTypeInfo(formData.tipdoc)==='C') && <Form.Group controlId="codcli">
                     <Form.Label className='custom-label mt-3'>Cliente</Form.Label>
                     <div className={`d-flex ${isTestataSave ? 'd-none' : ''}`}>
                         <Form.Control
@@ -438,6 +445,8 @@ const CreateDocument = () => {
                     <Form.Control placeholder="Descrizione" type="text" name="clientDesc" defaultValue={formData.clientDesc} readOnly disabled />
                     {clientShow && <Clienti clientShow={clientShow} handleClientClose={cliHandler} handleClientSelected={onCliSelect} clientSearchValue={formData.clientSearch}></Clienti>}
                 </Form.Group>}   
+
+                {(formData.tipdoc && getDocTypeInfo(formData.tipdoc)==='F') && <div>FORNITORE</div>}   
 
                 {!isTestataSave && <div>
                     <Button className="mt-3" variant="success" onClick={salvaTestata}>

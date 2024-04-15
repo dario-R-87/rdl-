@@ -213,4 +213,17 @@ recordRoutes.route("/clienti/:azienda/:serial").get(function (req, res) {
     });
 });
 
+recordRoutes.route("/fornitori/:azienda").get(function (req, res) {
+  const azienda = req.params.azienda;
+  db.query(`SELECT ANTIPCON, ANCODICE, ANDESCRI,ANDESCR2, ANDTOBSO FROM dbo.${azienda}CONTI
+  WHERE ANTIPCON='F' AND (ANDTOBSO IS NULL OR ANDTOBSO > GETDATE())`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 module.exports = recordRoutes;

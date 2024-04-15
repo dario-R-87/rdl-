@@ -467,6 +467,13 @@ const DocDett = ({ serial }) => {
         }
     }
 
+    const getDocTypeInfo = (tipdoc) => {
+        const docTypeSel = docType.filter((item)=>{
+            return (tipdoc===item.TDTIPDOC)
+        })
+        return docTypeSel[0].TDFLINTE;
+    }
+
     const test = () => {
         console.log(rows)
     }
@@ -498,7 +505,7 @@ const DocDett = ({ serial }) => {
                     <Form.Control required type="date" name="datadoc" value={formData.datadoc} onChange={handleChange} disabled />
                 </Form.Group>
 
-                {formData.tipdoc.includes('DDT') && <Form.Group controlId="codcli">
+                {(formData.tipdoc && getDocTypeInfo(formData.tipdoc)==='C') && <Form.Group controlId="codcli">
                     <Form.Label className='custom-label mt-3'>Cliente</Form.Label>
                     <Form.Control
                         placeholder="Codice"
@@ -510,6 +517,9 @@ const DocDett = ({ serial }) => {
                     <Form.Control placeholder="Descrizione" type="text" name="clientDesc" defaultValue={formData.clientDesc} readOnly disabled />
                     {clientShow && <Clienti clientShow={clientShow} handleClientClose={cliHandler} handleClientSelected={onCliSelect} clientSearchValue={formData.clientSearch}></Clienti>}
                 </Form.Group>}
+
+                {(formData.tipdoc && getDocTypeInfo(formData.tipdoc)==='F') && <div>FORNITORE</div>}   
+
 
                 {!loading && <div ref={cards}><RowsList rows={rows} handleDelete={onDelete} handleUpdate={onUpdate} /></div>}
 
