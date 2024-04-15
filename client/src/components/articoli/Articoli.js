@@ -17,15 +17,16 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
 
     const filterArt = () => {
         // console.log("filter art "+filterValue);
-        // console.log(articoli)
         let arts=[];
         if(filterValue!==''){
             arts = articoli.filter((item) => {
                 return (
                     item.CADESART.toLowerCase().includes(filterValue.toLowerCase()) ||
-                    item.CACODART.includes(filterValue)
+                    item.CACODICE.includes(filterValue)
                 )
                 });
+                // console.log(arts)
+
         } else {
             arts=articoli;
         }
@@ -52,7 +53,7 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                 const filteredRecords = records.filter((item) => {
                     return (
                         item.CADESART.toLowerCase().includes(filterValue.toLowerCase()) ||
-                        item.CACODART.includes(filterValue))
+                        item.CACODICE.includes(filterValue))
                 });
                 setArtsFiltered(filteredRecords)
             } else {
@@ -98,10 +99,10 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                     </Form>}
                     {/*artsFiltered.length>0 && */}
                 {!loading && artsFiltered.length===0 && <div className='text-center mt-3'>La ricerca non ha prodotto risultati!</div>}
-                {!loading && artsFiltered.slice(1, artsFiltered.length > 50 ? 50 : undefined).map((articolo) => (
+                {!loading && artsFiltered.slice(0, artsFiltered.length > 50 ? 50 : undefined).map((articolo) => (
                     <Card className="mt-2" key={articolo.CACODICE} onClick={() => selectArticolo(articolo.CACODART)} style={{ cursor: 'pointer' }}>
                         <Card.Body>
-                            <Card.Title>{articolo.CACODART}</Card.Title>
+                            <Card.Title>{articolo.CACODICE}</Card.Title>
                             <Card.Text>{articolo.CADESART + articolo.CADESSUP}</Card.Text>
                         </Card.Body>
                     </Card>

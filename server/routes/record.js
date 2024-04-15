@@ -129,7 +129,7 @@ recordRoutes.route("/record/add/:azienda").post(function (req, res) {
 
 recordRoutes.route("/doctype/:azienda").get(function (req, res) {
   const azienda = req.params.azienda;
-  db.query(`SELECT TDTIPDOC,TDDESDOC,ZUFLGAPP,TDCAUMAG FROM dbo.${azienda}TIP_DOCU WHERE ZUFLGAPP='S'`)
+  db.query(`SELECT TDTIPDOC,TDDESDOC,ZUFLGAPP,TDCAUMAG,TDFLINTE FROM dbo.${azienda}TIP_DOCU WHERE ZUFLGAPP='S'`)
     .then(result => {
       res.json(result);
     })
