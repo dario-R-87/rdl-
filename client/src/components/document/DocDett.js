@@ -59,15 +59,15 @@ const DocDett = ({ serial }) => {
 
     const setTestata = async (record) => {
         let tipconParam = '';
-        if(record.ZUTIPCON==='C')
+        if(record.TIPCON==='C')
             tipconParam = "clienti"
-        else if(record.ZUTIPCON==='F')
+        else if(record.TIPCON==='F')
             tipconParam = "fornitori"
 
         try {
             let clifor=null;
             if(tipconParam!==''){
-                const response = await fetch(`http://192.168.1.29:5000/${tipconParam}/${azienda}/${record.ZUCODCON}`);
+                const response = await fetch(`http://192.168.1.29:5000/${tipconParam}/${azienda}/${record.CODCON}`);
 
                 if (!response.ok) {
                     const message = `An error occurred: ${response.statusText}`;
@@ -81,8 +81,8 @@ const DocDett = ({ serial }) => {
                 ...formData,
                 tipdoc: record.TIPDOC,
                 datadoc: data,
-                codcon: record.ZUCODCON,
-                tipcon: record.ZUTIPCON,
+                codcon: record.CODCON,
+                tipcon: record.TIPCON,
                 clientDesc: clifor ? clifor[0].ANDESCRI : '',
             })
         } catch (error) {
@@ -163,8 +163,8 @@ const DocDett = ({ serial }) => {
                     magdes: item.MAGDES,
                     insuser: item.INSUSER,
                     rownum: item.ROWNUM,
-                    codcon: item.ZUCODCON,
-                    tipcon: item.ZUTIPCON,
+                    codcon: item.CODCON,
+                    tipcon: item.TIPCON,
                     // desc: '',
                     // matricole: [],
                     // unimis1: "",

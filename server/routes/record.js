@@ -117,7 +117,7 @@ recordRoutes.route("/record/add/:azienda").post(function (req, res) {
     rownum
   } = req.body; // Assumendo che il body della richiesta contenga i dati per il nuovo record
 
-  db.query(`INSERT INTO dbo.${azienda}ZUAPPAHR (SERIAL, TIPDOC, DATDOC, ZUCODCON, ZUTIPCON, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM) VALUES
+  db.query(`INSERT INTO dbo.${azienda}ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODCON, TIPCON, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM) VALUES
   ('${serial}', '${tipdoc}', '${datadoc}', '${codcon}', '${tipcon}','${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${magdes}', '${insuser}', ${rownum})`)
     .then(result => {
       res.status(201).json({ message: "Record aggiunto con successo" });
