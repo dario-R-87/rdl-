@@ -2,12 +2,16 @@ import React, { useEffect,useState } from 'react'
 import { Container, Table, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 import { format, parse } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarCheck, faCheckDouble, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+
 import "./document.css"
 
 const Documents = () => {
     const navigate = useNavigate();
     const azienda = localStorage.getItem("azienda")
     const [documents, setDocuments] = useState([]);
+    const [confirm, setConfirm] = useState(false);
 
     const getDocuments = async () => {
         try {
@@ -32,6 +36,27 @@ const Documents = () => {
         getDocuments();
     }, [])
 
+    const confermaDocumento = async (serial) => {
+        try {
+            const response = await fetch(`http://192.168.1.29:5000/conferma/${azienda}/${serial}`, {
+                method: "PUT", // Metodo PUT per l'operazione di aggiornamento
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({}), // Includi i dati da aggiornare nel corpo della richiesta
+            });
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            alert("Documento Confermato!")
+            setConfirm(!confirm);
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
     return (
         <Container className='my-5 py-5'>
             <div className='mt-3 mb-5 d-flex justify-content-between'>
@@ -45,6 +70,7 @@ const Documents = () => {
                         <th>Numero</th>
                         <th>Tipo</th>
                         <th>Data</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -58,6 +84,11 @@ const Documents = () => {
                             <td><a href={`/docdett/${doc.SERIAL}`}>{doc.SERIAL}</a></td>
                             <td>{doc.TIPDOC}</td>
                             <td>{format(new Date(doc.DATDOC), 'dd/MM/yyyy')}</td>
+                            <td className='conferma'>
+                                {doc.FLIMPO==='P' ? 
+                                <button onClick={()=>{confermaDocumento(doc.SERIAL)}}><FontAwesomeIcon icon={faCircleCheck} /></button> : 
+                                <FontAwesomeIcon icon={faCheckDouble} />}
+                            </td>
                         </tr>)
                     ))}
                 </tbody>

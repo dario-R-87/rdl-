@@ -49,7 +49,7 @@ recordRoutes.route("/matricole/:azienda/:serial").get(function (req, res) {
 
 recordRoutes.route("/documenti/:azienda").get(function (req, res) {
   const azienda = req.params.azienda;
-  db.query(`SELECT SERIAL, TIPDOC, DATDOC, COUNT(*) FROM dbo.${azienda}ZUAPPAHR WHERE (FLIMPO IS NULL) GROUP BY SERIAL, TIPDOC, DATDOC`)
+  db.query(`SELECT SERIAL, TIPDOC, DATDOC, FLIMPO, COUNT(*) FROM dbo.${azienda}ZUAPPAHR WHERE (FLIMPO IN ('P', 'I')) GROUP BY SERIAL, TIPDOC, DATDOC, FLIMPO`)
     .then(result => {
       res.json(result);
     })
@@ -64,6 +64,20 @@ recordRoutes.route("/documento/:azienda/:serial").get(function (req, res) {
   const serial = req.params.serial;
 
   db.query(`SELECT * FROM dbo.${azienda}ZUAPPAHR WHERE SERIAL='${serial}'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
+recordRoutes.route("/conferma/:azienda/:serial").put(function (req, res) {
+  const azienda = req.params.azienda;
+  const serial = req.params.serial;
+
+  db.query(`UPDATE dbo.${azienda}ZUAPPAHR SET FLIMPO = 'I' WHERE SERIAL='${serial}'`)
     .then(result => {
       res.json(result);
     })
@@ -117,8 +131,8 @@ recordRoutes.route("/record/add/:azienda").post(function (req, res) {
     rownum
   } = req.body; // Assumendo che il body della richiesta contenga i dati per il nuovo record
 
-  db.query(`INSERT INTO dbo.${azienda}ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODCON, TIPCON, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM) VALUES
-  ('${serial}', '${tipdoc}', '${datadoc}', '${codcon}', '${tipcon}','${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${magdes}', '${insuser}', ${rownum})`)
+  db.query(`INSERT INTO dbo.${azienda}ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODCON, TIPCON, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM, FLIMPO) VALUES
+  ('${serial}', '${tipdoc}', '${datadoc}', '${codcon}', '${tipcon}','${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${magdes}', '${insuser}', ${rownum}, 'P')`)
     .then(result => {
       res.status(201).json({ message: "Record aggiunto con successo" });
     })

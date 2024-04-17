@@ -11,3 +11,26 @@
 a {
  text-decoration: none;
 }
+
+.conferma{
+    text-align: center;
+}
+
+.fa-circle-check {
+    color: green;
+  }
+
+.fa-check-double{
+    color: red;
+}
+
+button {
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    outline: none;
+  }
