@@ -383,43 +383,53 @@ const DocDett = ({ serial }) => {
     }
 
     const onDelete = (rownum) => {
-        const conferma = window.confirm("Sei sicuro di voler elimiare la riga?");
-        if (conferma) {
-            // Filtra gli elementi escludendo quello con rownum uguale a rownumToDelete
-            const updatedRows = rows.filter(row => row.rownum !== rownum);
-            // Aggiorna lo stato con il nuovo array di elementi
-            setRows(updatedRows);
-            resetByUpdate();
-            rownumRecalc();
-            alert("Riga eliminata");
+        if(!editable){
+            alert("Documento non modificabile!")
+        }
+        else {
+            const conferma = window.confirm("Sei sicuro di voler elimiare la riga?");
+            if (conferma) {
+                // Filtra gli elementi escludendo quello con rownum uguale a rownumToDelete
+                const updatedRows = rows.filter(row => row.rownum !== rownum);
+                // Aggiorna lo stato con il nuovo array di elementi
+                setRows(updatedRows);
+                resetByUpdate();
+                rownumRecalc();
+                alert("Riga eliminata");
+            }            
         }
     }
 
     const onUpdate = (rownum) => {
-        setUpdate({ ...update, updating: true, rownum: rownum })
-        const rowByUpdate = rows.find(row => row.rownum === rownum);
-        setCurrentMat(rowByUpdate.matricole)
-        setCurrentArt({
-            ...currentArt,
-            data: {
-                ...currentArt.data,
-                ARUNMIS1: rowByUpdate.unimis1,
-                ARUNMIS2: rowByUpdate.unimis2
+        if(!editable){
+            alert("Documento non modificabile!")
+        }
+        else {
+            setUpdate({ ...update, updating: true, rownum: rownum })
+            const rowByUpdate = rows.find(row => row.rownum === rownum);
+            setCurrentMat(rowByUpdate.matricole)
+            setCurrentArt({
+                ...currentArt,
+                data: {
+                    ...currentArt.data,
+                    ARUNMIS1: rowByUpdate.unimis1,
+                    ARUNMIS2: rowByUpdate.unimis2
+                }
+            });
+            setFormData({
+                ...formData,
+                codmat: rowByUpdate.codmat,
+                quanti: rowByUpdate.quanti,
+                codart: rowByUpdate.codart,
+                desc: rowByUpdate.desc,
+                unimis: rowByUpdate.unimis,
+                magpar: rowByUpdate.magpar,
+                magdes: rowByUpdate.magdes
+            })
+            if (formRef.current) {
+                // Usa il metodo scrollIntoView() per scorrere fino al form
+                formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
             }
-        });
-        setFormData({
-            ...formData,
-            codmat: rowByUpdate.codmat,
-            quanti: rowByUpdate.quanti,
-            codart: rowByUpdate.codart,
-            desc: rowByUpdate.desc,
-            unimis: rowByUpdate.unimis,
-            magpar: rowByUpdate.magpar,
-            magdes: rowByUpdate.magdes
-        })
-        if (formRef.current) {
-            // Usa il metodo scrollIntoView() per scorrere fino al form
-            formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
 
@@ -478,8 +488,12 @@ const DocDett = ({ serial }) => {
     }
 
     const onExit = (dest) => {
-        const conferma = window.confirm("Se abbandoni la pagina perderai le modifiche apportate, confermi uscita?");
-        if(conferma){
+        if(editable){
+            const conferma = window.confirm("Se abbandoni la pagina perderai le modifiche apportate, confermi uscita?");
+            if(conferma){
+                navigate(dest);
+            }
+        } else {
             navigate(dest);
         }
     }
@@ -518,7 +532,7 @@ const DocDett = ({ serial }) => {
 
     return (
         <Container className='my-5 py-5'>
-            <button onClick={test}>test</button>
+            {/* <button onClick={test}>test</button> */}
             <Logout />
             <TimerRefresh />
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat} />
@@ -568,124 +582,126 @@ const DocDett = ({ serial }) => {
                     {update.updating ? `MODIFICA RIGA ${update.rownum}` : ''}
                 </div>
 
-                <Form.Group controlId="codart">
-                    <Form.Label className='custom-label mt-3'>Articolo</Form.Label>
-                    <div className='d-flex'>
+                {editable && <div>
+                    <Form.Group controlId="codart">
+                        <Form.Label className='custom-label mt-3'>Articolo</Form.Label>
+                        <div className='d-flex'>
+                            <Form.Control
+                                className={update.updating ? 'update-input' : ''}
+                                placeholder="Cerca..."
+                                type="text"
+                                name="search"
+                                value={formData.search}
+                                onChange={handleChange}
+                            />
+                            <Button onClick={artHandler}><FontAwesomeIcon icon={faSearch} /></Button>
+                        </div>
+                        <Form.Control
+                            placeholder="Codice"
+                            required type="text"
+                            name="codart"
+                            defaultValue={formData.codart}
+                            disabled
+                        />
+                        <Form.Control placeholder="Descrizione" type="text" name="desc" defaultValue={formData.desc} readOnly disabled />
+                        {show && <Articoli show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect} searchValue={formData.search}></Articoli>}
+                    </Form.Group>
+
+                    <Form.Group controlId="magpar">
+                        <Form.Label className='custom-label mt-3'>Magazzino Origine</Form.Label>
+                        <Form.Control
+                            required as="select"
+                            name="magpar"
+                            value={formData.magpar}
+                            onChange={handleChange}
+                            className={update.updating ? 'update-input' : ''}>
+                            <option value=""></option>
+                            {mag.map((ma) => {
+                                if (ma.MGDESMAG.trim() !== '') {
+                                    return <option key={ma.MGCODMAG} value={ma.MGCODMAG}>{ma.MGDESMAG}</option>
+                                }
+                                return null;
+                            })}
+                        </Form.Control>
+                    </Form.Group>
+
+                    {hasCauCol && <Form.Group controlId="magdes">
+                        <Form.Label className='custom-label mt-3'>Magazzino Destinazione</Form.Label>
+                        <Form.Control
+                            required
+                            as="select"
+                            name="magdes"
+                            value={formData.magdes}
+                            onChange={handleChange}
+                            className={update.updating ? 'update-input' : ''}>
+                            <option value=""></option>
+                            {mag.map((ma) => {
+                                if (ma.MGDESMAG.trim() !== '') {
+                                    return <option key={ma.MGCODMAG} value={ma.MGCODMAG}>{ma.MGDESMAG}</option>
+                                }
+                                return null;
+                            })}
+                        </Form.Control>
+                    </Form.Group>}
+
+                    <Form.Group controlId="unimis">
+                        <Form.Label className='custom-label mt-3'>Unità di Misura</Form.Label>
+                        <Form.Control
+                            required
+                            className={update.updating ? 'update-input' : ''}
+                            as="select"
+                            name="unimis"
+                            value={formData.unimis}
+                            onChange={handleChange}>
+                            <option value=""></option>
+                            {currentArt.data.ARUNMIS1 && (<option value={currentArt.data.ARUNMIS1}>{currentArt.data.ARUNMIS1}</option>)}
+                            {currentArt.data.ARUNMIS2 && (<option value={currentArt.data.ARUNMIS2}>{currentArt.data.ARUNMIS2}</option>)}
+                        </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group controlId="quanti">
+                        <Form.Label className='custom-label mt-3'>Quantità</Form.Label>
                         <Form.Control
                             className={update.updating ? 'update-input' : ''}
-                            placeholder="Cerca..."
-                            type="text"
-                            name="search"
-                            value={formData.search}
+                            required
+                            type="number"
+                            name="quanti"
+                            min="1"
+                            disabled={(currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) ? true : false}
+                            value={(currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) ? 1 : formData.quanti}
                             onChange={handleChange}
                         />
-                        <Button onClick={artHandler}><FontAwesomeIcon icon={faSearch} /></Button>
+                    </Form.Group>
+
+                    {(currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) && <Form.Group controlId="codmat">
+                        <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
+                        <Form.Control
+                            className={update.updating ? 'update-input' : ''}
+                            required
+                            as="select"
+                            name="codmat"
+                            value={formData.codmat}
+                            onChange={handleChange}>
+                            <option value=""></option>
+                            {currentMat.map((mat) => <option key={mat.AMCODICE} value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
+                        </Form.Control>
+                    </Form.Group>}
+
+                    <div className='d-flex justify-content-between'>
+                        {!update.updating && <Button className="mt-3" variant="primary" type="submit">
+                            Aggiungi Riga
+                        </Button>}
+                        {update.updating && <Button onClick={() => { updateRow() }} className="mt-3" variant="success">
+                            Salva Modifiche
+                        </Button>}
+                        {!update.updating && <Button onClick={() => { handleSubmit() }} className="mt-3" variant="warning">
+                            Salva Documento
+                        </Button>}
+                        {update.updating && <Button onClick={() => resetByUpdate()} className="mt-3" variant="danger">
+                            Annulla
+                        </Button>}
                     </div>
-                    <Form.Control
-                        placeholder="Codice"
-                        required type="text"
-                        name="codart"
-                        defaultValue={formData.codart}
-                        disabled
-                    />
-                    <Form.Control placeholder="Descrizione" type="text" name="desc" defaultValue={formData.desc} readOnly disabled />
-                    {show && <Articoli show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect} searchValue={formData.search}></Articoli>}
-                </Form.Group>
-
-                <Form.Group controlId="magpar">
-                    <Form.Label className='custom-label mt-3'>Magazzino Origine</Form.Label>
-                    <Form.Control
-                        required as="select"
-                        name="magpar"
-                        value={formData.magpar}
-                        onChange={handleChange}
-                        className={update.updating ? 'update-input' : ''}>
-                        <option value=""></option>
-                        {mag.map((ma) => {
-                            if (ma.MGDESMAG.trim() !== '') {
-                                return <option key={ma.MGCODMAG} value={ma.MGCODMAG}>{ma.MGDESMAG}</option>
-                            }
-                            return null;
-                        })}
-                    </Form.Control>
-                </Form.Group>
-
-                {hasCauCol && <Form.Group controlId="magdes">
-                    <Form.Label className='custom-label mt-3'>Magazzino Destinazione</Form.Label>
-                    <Form.Control
-                        required
-                        as="select"
-                        name="magdes"
-                        value={formData.magdes}
-                        onChange={handleChange}
-                        className={update.updating ? 'update-input' : ''}>
-                        <option value=""></option>
-                        {mag.map((ma) => {
-                            if (ma.MGDESMAG.trim() !== '') {
-                                return <option key={ma.MGCODMAG} value={ma.MGCODMAG}>{ma.MGDESMAG}</option>
-                            }
-                            return null;
-                        })}
-                    </Form.Control>
-                </Form.Group>}
-
-                <Form.Group controlId="unimis">
-                    <Form.Label className='custom-label mt-3'>Unità di Misura</Form.Label>
-                    <Form.Control
-                        required
-                        className={update.updating ? 'update-input' : ''}
-                        as="select"
-                        name="unimis"
-                        value={formData.unimis}
-                        onChange={handleChange}>
-                        <option value=""></option>
-                        {currentArt.data.ARUNMIS1 && (<option value={currentArt.data.ARUNMIS1}>{currentArt.data.ARUNMIS1}</option>)}
-                        {currentArt.data.ARUNMIS2 && (<option value={currentArt.data.ARUNMIS2}>{currentArt.data.ARUNMIS2}</option>)}
-                    </Form.Control>
-                </Form.Group>
-
-                <Form.Group controlId="quanti">
-                    <Form.Label className='custom-label mt-3'>Quantità</Form.Label>
-                    <Form.Control
-                        className={update.updating ? 'update-input' : ''}
-                        required
-                        type="number"
-                        name="quanti"
-                        min="1"
-                        disabled={(currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) ? true : false}
-                        value={(currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) ? 1 : formData.quanti}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-
-                {(currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) && <Form.Group controlId="codmat">
-                    <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
-                    <Form.Control
-                        className={update.updating ? 'update-input' : ''}
-                        required
-                        as="select"
-                        name="codmat"
-                        value={formData.codmat}
-                        onChange={handleChange}>
-                        <option value=""></option>
-                        {currentMat.map((mat) => <option key={mat.AMCODICE} value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
-                    </Form.Control>
-                </Form.Group>}
-
-                <div className='d-flex justify-content-between'>
-                    {!update.updating && <Button className="mt-3" variant="primary" type="submit">
-                        Aggiungi Riga
-                    </Button>}
-                    {update.updating && <Button onClick={() => { updateRow() }} className="mt-3" variant="success">
-                        Salva Modifiche
-                    </Button>}
-                    {!update.updating && <Button onClick={() => { handleSubmit() }} className="mt-3" variant="warning">
-                        Salva Documento
-                    </Button>}
-                    {update.updating && <Button onClick={() => resetByUpdate()} className="mt-3" variant="danger">
-                        Annulla
-                    </Button>}
-                </div>
+                </div>}
             </Form>
         </Container>
     );
