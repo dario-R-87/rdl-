@@ -34,26 +34,29 @@ const Documents = () => {
 
     useEffect(()=>{
         getDocuments();
-    }, [])
+    }, [confirm])
 
     const confermaDocumento = async (serial) => {
-        try {
-            const response = await fetch(`http://192.168.1.29:5000/conferma/${azienda}/${serial}`, {
-                method: "PUT", // Metodo PUT per l'operazione di aggiornamento
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({}), // Includi i dati da aggiornare nel corpo della richiesta
-            });
-            if (!response.ok) {
-                const message = `An error occurred: ${response.statusText}`;
-                window.alert(message);
-                return;
+        const conferma = window.confirm("Confermando il documento non vi si potranno più apportare modifiche!");
+        if(conferma){
+            try {
+                const response = await fetch(`http://192.168.1.29:5000/conferma/${azienda}/${serial}`, {
+                    method: "PUT", // Metodo PUT per l'operazione di aggiornamento
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({}), // Includi i dati da aggiornare nel corpo della richiesta
+                });
+                if (!response.ok) {
+                    const message = `An error occurred: ${response.statusText}`;
+                    window.alert(message);
+                    return;
+                }
+                alert("Documento Confermato!")
+                setConfirm(!confirm);
+            } catch (error) {
+                alert(error.message);
             }
-            alert("Documento Confermato!")
-            setConfirm(!confirm);
-        } catch (error) {
-            alert(error.message);
         }
     }
 

@@ -54,6 +54,7 @@ const DocDett = ({ serial }) => {
     const [mag, setMag] = useState([]);
     const [hasCauCol, setHasCauCol] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [editable, setEditable] = useState(false);
     const formRef = useRef(null);
     const cards = useRef(null);
 
@@ -150,6 +151,9 @@ const DocDett = ({ serial }) => {
             }
             const records = await response.json();
             //MAP DEI RECORD
+            if(records[0].FLIMPO==='P'){
+                setEditable(true);
+            }
             const formattedRecord = records.map((item) => {
                 return {
                     serial: item.SERIAL,
@@ -165,6 +169,7 @@ const DocDett = ({ serial }) => {
                     rownum: item.ROWNUM,
                     codcon: item.CODCON,
                     tipcon: item.TIPCON,
+                    flimpo: item.FLIMPO,
                     // desc: '',
                     // matricole: [],
                     // unimis1: "",
@@ -508,12 +513,12 @@ const DocDett = ({ serial }) => {
     }
 
     const test = () => {
-        console.log(rows)
+        console.log(editable)
     }
 
     return (
         <Container className='my-5 py-5'>
-            {/* <button onClick={test}>test</button> */}
+            <button onClick={test}>test</button>
             <Logout />
             <TimerRefresh />
             <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat} />
