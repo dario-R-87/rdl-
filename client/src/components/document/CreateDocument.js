@@ -95,6 +95,9 @@ const CreateDocument = () => {
             ...formData,
             [name]: value
         });
+        if(name==='search' && (value.length-formData.search.length)>10){
+            artHandler();
+        }
     };
 
     const rownumRecalc = () => {
@@ -208,7 +211,7 @@ const CreateDocument = () => {
 
     const getArtData = async (selected) => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/artsdata/${azienda}/${selected.CACODICE}`);
+            const response = await fetch(`http://192.168.1.29:5000/artsdata/${azienda}/${selected.CACODART}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -224,7 +227,6 @@ const CreateDocument = () => {
 
     const onArtSelect = async (selected) => {
         const artData = await getArtData(selected)
-        console.log(artData.ARUNMIS1)
         setFormData({
             ...formData,
             codart: selected.CACODART,

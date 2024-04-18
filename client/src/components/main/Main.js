@@ -3,6 +3,7 @@ import {Button} from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 import Logout from '../pages/Logout';
+import TimerRefresh from '../timerRefresh/TimerRefresh';
 
 const Main = () => {
     const navigate = useNavigate();
@@ -42,6 +43,7 @@ const Main = () => {
                 <Link to="/documenti"><Button>Visualizza Documenti</Button></Link>
             </Container>
             <Logout />
+            <TimerRefresh />
         </Container>
     );
 }

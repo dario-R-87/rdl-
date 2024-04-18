@@ -9,6 +9,7 @@ const TimerRefresh = () => {
         clearTimeout(idleTimer);
         idleTimer = setTimeout(refreshPage, 60 * 60 * 1000); // 60 minuti
         // console.log("timer resettato: ")
+        localStorage.setItem("loginTime",new Date().getTime());
     }
 
     function refreshPage() {

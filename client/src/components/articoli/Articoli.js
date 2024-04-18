@@ -31,6 +31,9 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
             arts=articoli;
         }
         setArtsFiltered(arts);
+        if(arts.length===1){
+            selectArticolo(arts[0].CACODART);
+        }
     }
 
     useEffect(() => {
@@ -56,6 +59,10 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
                         item.CACODICE.includes(filterValue))
                 });
                 setArtsFiltered(filteredRecords)
+                if(filteredRecords.length===1){
+                    handleArticoloSelect(filteredRecords[0]);
+                    handleClose();
+                }
             } else {
                 setArtsFiltered(records)
             }
