@@ -199,6 +199,9 @@ const DocDett = ({ serial }) => {
             ...formData,
             [name]: value
         });
+        if(name==='search' && (value.length-formData.search.length)>10){
+            artHandler();
+        }
     };
 
     const rownumRecalc = () => {
@@ -302,7 +305,7 @@ const DocDett = ({ serial }) => {
 
     const getArtData = async (selected) => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/artsdata/${azienda}/${selected.CACODICE}`);
+            const response = await fetch(`http://192.168.1.29:5000/artsdata/${azienda}/${selected.CACODART}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -673,7 +676,7 @@ const DocDett = ({ serial }) => {
                         />
                     </Form.Group>
 
-                    {(currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) && <Form.Group controlId="codmat">
+                    {!hasForn() && (currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) && <Form.Group controlId="codmat">
                         <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
                         <Form.Control
                             className={update.updating ? 'update-input' : ''}
@@ -686,6 +689,18 @@ const DocDett = ({ serial }) => {
                             {currentMat.map((mat) => <option key={mat.AMCODICE} value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
                         </Form.Control>
                     </Form.Group>}
+
+                    {hasForn() && (currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) && <Form.Group controlId="codmat">
+                    <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
+                    <Form.Control 
+                        className={update.updating ? 'update-input' : ''}
+                        required 
+                        name="codmat"
+                        type="text"
+                        value={formData.codmat} 
+                        onChange={handleChange}>
+                    </Form.Control>
+                </Form.Group>}
 
                     <div className='d-flex justify-content-between'>
                         {!update.updating && <Button className="mt-3" variant="primary" type="submit">

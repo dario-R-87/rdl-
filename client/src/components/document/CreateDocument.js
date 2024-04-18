@@ -578,7 +578,7 @@ const CreateDocument = () => {
                     />
                 </Form.Group>
 
-                {(currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) && <Form.Group controlId="codmat">
+                {!hasForn() && (currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) && <Form.Group controlId="codmat">
                     <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
                     <Form.Control 
                         className={update.updating ? 'update-input' : ''}
@@ -589,6 +589,18 @@ const CreateDocument = () => {
                         onChange={handleChange}>
                          <option value=""></option>
                          {currentMat.map((mat)=> <option key={mat.AMCODICE} value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
+                    </Form.Control>
+                </Form.Group>}
+
+                {hasForn() && (currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) && <Form.Group controlId="codmat">
+                    <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
+                    <Form.Control 
+                        className={update.updating ? 'update-input' : ''}
+                        required 
+                        name="codmat"
+                        type="text"
+                        value={formData.codmat} 
+                        onChange={handleChange}>
                     </Form.Control>
                 </Form.Group>}
 
