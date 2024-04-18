@@ -232,7 +232,7 @@ const CreateDocument = () => {
             codart: selected.CACODART,
             desc: selected.CADESART,
             search: "",
-            codmat: '',
+            codmat: artData.ARGESMAT==='S' ? selected.matricola : '',
             unimis: artData.ARUNMIS1,
         })
     }
@@ -418,8 +418,8 @@ const CreateDocument = () => {
     }
 
     const test=()=>{
-        console.log("client: "+hasClient());
-        console.log("forn: "+hasForn());
+        console.log("selected.matricola : "+formData.codmat);
+
         setA(!aaa)
     }
 
@@ -588,7 +588,7 @@ const CreateDocument = () => {
                         value={formData.codmat} 
                         onChange={handleChange}>
                          <option value=""></option>
-                         {currentMat.map((mat)=> <option key={mat.AMCODICE} value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
+                         {currentMat.map((mat)=> <option key={mat.AMCODICE} value={mat.AMCODICE.trim()}>{mat.AMCODICE}</option>)}
                     </Form.Control>
                 </Form.Group>}
 

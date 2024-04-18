@@ -327,7 +327,7 @@ const DocDett = ({ serial }) => {
             codart: selected.CACODART,
             desc: selected.CADESART,
             search: "",
-            codmat: '',
+            codmat: artData.ARGESMAT==='S' ? selected.matricola : '',
             unimis: artData.ARUNMIS1,
         })
         handleCauCol();
@@ -502,11 +502,11 @@ const DocDett = ({ serial }) => {
     }
 
     const hasClient = () => {
-        if(formData.tipdoc){
+        if(formData.tipdoc!==""){
             const docTypeSel = docType.filter((item)=>{
-                return (formData.tipdoc===item.TDTIPDOC)
+                return (formData.tipdoc.trim()===item.TDTIPDOC.trim())
             })
-            if(docTypeSel[0].TDFLINTE==='C')
+            if(docTypeSel[0] && docTypeSel[0].TDFLINTE==='C')
                 return true;
             else
                return false;
@@ -516,11 +516,11 @@ const DocDett = ({ serial }) => {
     }
 
     const hasForn = () => {
-        if(formData.tipdoc){
+        if(formData.tipdoc!==""){
             const docTypeSel = docType.filter((item)=>{
-                return (formData.tipdoc===item.TDTIPDOC)
+                return (formData.tipdoc.trim()===item.TDTIPDOC.trim())
             })
-            if(docTypeSel[0].TDFLINTE==='F')
+            if(docTypeSel[0] && docTypeSel[0].TDFLINTE==='F')
                 return true;
             else
                 return false;
@@ -686,7 +686,7 @@ const DocDett = ({ serial }) => {
                             value={formData.codmat}
                             onChange={handleChange}>
                             <option value=""></option>
-                            {currentMat.map((mat) => <option key={mat.AMCODICE} value={mat.AMCODICE}>{mat.AMCODICE}</option>)}
+                            {currentMat.map((mat) => <option key={mat.AMCODICE} value={mat.AMCODICE.trim()}>{mat.AMCODICE}</option>)}
                         </Form.Control>
                     </Form.Group>}
 

@@ -41,6 +41,24 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
         filterArt();
     }, [filterValue]);
 
+    const getArtCode = () => {
+        if(!filterValue.includes("|")){
+            return filterValue;
+        } else {
+            const parts = filterValue.split("|")
+            return parts[0];
+        }
+    }
+
+    const getMatCode = () => {
+        if(filterValue.includes("|")){
+            const parts = filterValue.split("|")
+            return parts[1];
+        } else {
+            return "";
+        }
+    }
+
     // This method fetches the records from the database.
     const getArticoli = async () => {
         try {
@@ -53,13 +71,16 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
             }
             let records = await response.json();
             if (filterValue.length > 0) {
+                const artCode = getArtCode();
+                const matCode = getMatCode();
                 const filteredRecords = records.filter((item) => {
                     return (
-                        item.CADESART.toLowerCase().includes(filterValue.toLowerCase()) ||
-                        item.CACODICE.includes(filterValue))
+                        item.CADESART.toLowerCase().includes(artCode.toLowerCase()) ||
+                        item.CACODICE.includes(artCode))
                 });
                 setArtsFiltered(filteredRecords)
                 if(filteredRecords.length===1){
+                    filteredRecords[0].matricola = matCode;
                     handleArticoloSelect(filteredRecords[0]);
                     handleClose();
                 }
