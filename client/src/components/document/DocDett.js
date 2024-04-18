@@ -421,7 +421,7 @@ const DocDett = ({ serial }) => {
             });
             setFormData({
                 ...formData,
-                codmat: rowByUpdate.codmat,
+                codmat: rowByUpdate.codmat.trim(),
                 quanti: rowByUpdate.quanti,
                 codart: rowByUpdate.codart,
                 desc: rowByUpdate.desc,
