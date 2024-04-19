@@ -15,8 +15,6 @@ import TimerRefresh from '../timerRefresh/TimerRefresh';
 //import DocRows from './DocRows';
 import RowsList from './RowsList';
 import { formatISO } from 'date-fns';
-import { Html5QrcodeScanner } from "html5-qrcode";
-
 
 const DocDett = ({ serial }) => {
     const navigate = useNavigate();
@@ -56,31 +54,8 @@ const DocDett = ({ serial }) => {
     const [hasCauCol, setHasCauCol] = useState(false);
     const [loading, setLoading] = useState(true);
     const [editable, setEditable] = useState(false);
-    const [scanResult, setScanResult] = useState(null);
     const formRef = useRef(null);
     const cards = useRef(null);
-
-    useEffect(()=>{
-        const scanner = new Html5QrcodeScanner('reader', {
-            qrbox:{
-                width: 50,
-                height: 50,
-            },
-            fps: 5,
-        })
-    
-        scanner.render(success, error);
-    
-        function success(result) {
-            scanner.clear();
-            setScanResult(result);
-            setFormData({...formData, search: result})
-        }
-    
-        function error(err) {
-            console.warn(err);
-        }
-    },[])
 
     const setTestata = async (record) => {
         let tipconParam = '';
@@ -609,9 +584,7 @@ const DocDett = ({ serial }) => {
                     {update.updating ? `MODIFICA RIGA ${update.rownum}` : ''}
                 </div>
 
-                {!editable && <div className='' id='reader'></div>}
                 {editable && <div>
-                    <div className='' id='reader'></div>
                     <Form.Group controlId="codart">
                         <Form.Label className='custom-label mt-3'>Articolo</Form.Label>
                         <div className='d-flex'>
