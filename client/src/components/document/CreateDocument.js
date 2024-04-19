@@ -90,13 +90,18 @@ const CreateDocument = () => {
     }, [isTestataSave])
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-        if(name==='search' && (value.length-formData.search.length)>10){
+        const { name, value } = e.target;       
+        if(name==='search' && (value.length-formData.search.length)>2){
+            setFormData({
+                ...formData,
+                [name]: value.substring(formData.search.length)
+            });
             artHandler();
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value
+             });
         }
     };
 

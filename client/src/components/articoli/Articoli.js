@@ -12,7 +12,11 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
 
     const handleChange = (e) => {
         const newValue = e.target.value
-        setFilterValue(newValue)
+        if((newValue.length-filterValue.length)>2){
+            setFilterValue(newValue.substring(filterValue.length))
+        } else {
+            setFilterValue(newValue)
+        }
     }
 
     const filterArt = () => {
