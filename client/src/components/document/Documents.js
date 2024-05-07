@@ -79,7 +79,7 @@ const Documents = () => {
                 <tbody>
                     {documents.length===0 ? 
                     (<tr>
-                        <td colSpan="4" style={{ fontWeight: 'bold', textAlign: 'center' }}>Nessun documento trovato!</td>
+                        <td colSpan="5" style={{ fontWeight: 'bold', textAlign: 'center' }}>Nessun documento trovato!</td>
                     </tr>) : 
                     (documents.slice().reverse().map((doc, index)=>                        
                         (<tr key={index}>
@@ -89,7 +89,7 @@ const Documents = () => {
                             <td>{format(new Date(doc.DATDOC), 'dd/MM/yyyy')}</td>
                             <td className='conferma'>
                                 {doc.FLIMPO==='P' ? 
-                                <button onClick={()=>{confermaDocumento(doc.SERIAL)}}><FontAwesomeIcon icon={faCircleCheck} /></button> : 
+                                <button title="Conferma documento" onClick={()=>{confermaDocumento(doc.SERIAL)}}><FontAwesomeIcon icon={faCircleCheck} /></button> : 
                                 <FontAwesomeIcon icon={faCheckDouble} />}
                             </td>
                         </tr>)

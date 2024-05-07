@@ -180,7 +180,7 @@ recordRoutes.route("/causale_mag/:azienda/:causale_mag").get(function (req, res)
 });
 
 recordRoutes.route("/users").get(function (req, res) {
-  db.query("SELECT CODE, NAME, PASSWD FROM dbo.CPUSERS WHERE webtype='S'")
+  db.query("SELECT CODE, NAME, PASSWD FROM dbo.CPUSERS WHERE zuuteapp='S'")
     .then(result => {
       res.json(result);
     })
@@ -191,7 +191,7 @@ recordRoutes.route("/users").get(function (req, res) {
 });
 
 recordRoutes.route("/aziende").get(function (req, res) {
-  db.query("SELECT AZCODAZI, AZRAGAZI FROM dbo.AZIENDA")
+  db.query("SELECT AZCODAZI, AZRAGAZI FROM dbo.AZIENDA WHERE ZUAZIAPP='S'")
     .then(result => {
       res.json(result);
     })
