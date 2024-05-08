@@ -35,6 +35,7 @@ const DocDett = ({ serial }) => {
         clientDesc: '',
         desc: '',
         codcon: '',
+        mat_barcode: '',
     });
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
@@ -200,6 +201,13 @@ const DocDett = ({ serial }) => {
         });
         if(name==='search' && (value.length-formData.search.length)>10){
             artHandler();
+        }
+        if(name==='mat_barcode' && (value.length-formData.mat_barcode.length)>2){
+            setFormData({
+                ...formData,
+                [name]: value.substring(formData.mat_barcode.length),
+                codmat: value.substring(formData.mat_barcode.length),
+            });
         }
     };
 
@@ -675,8 +683,17 @@ const DocDett = ({ serial }) => {
                         />
                     </Form.Group>
 
-                    {!hasForn() && (currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '')) && <Form.Group controlId="codmat">
+                    {!hasForn() && (currentArt.data.ARGESMAT === 'S' || (formData.codmat.trim() !== '' || currentMat.length>0)) && <Form.Group controlId="codmat">
                         <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
+                        <Form.Control
+                            className={update.updating ? 'update-input' : ''}
+                            placeholder="Leggi con palmare"
+                            type="text"
+                            name="mat_barcode"
+                            value={formData.mat_barcode}
+                            onChange={handleChange}
+                        />
+                        <Form.Label className='mb-0 mt-3 mat-label'>Elenco matricole disponibili</Form.Label>
                         <Form.Control
                             className={update.updating ? 'update-input' : ''}
                             required
@@ -689,7 +706,7 @@ const DocDett = ({ serial }) => {
                         </Form.Control>
                     </Form.Group>}
 
-                    {hasForn() && (currentArt.data.ARGESMAT==='S' || (formData.codmat!=='')) && <Form.Group controlId="codmat">
+                    {hasForn() && (currentArt.data.ARGESMAT==='S' || (formData.codmat!=='' || currentMat.length>0)) && <Form.Group controlId="codmat">
                     <Form.Label className='custom-label mt-3'>Codice Matricola</Form.Label>
                     <Form.Control 
                         className={update.updating ? 'update-input' : ''}

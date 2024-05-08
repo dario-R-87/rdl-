@@ -4,6 +4,12 @@
     /* Altri stili desiderati */
 }
 
+.mat-label {
+    /* font-weight: bold; */
+    color: rgb(189, 141, 10);
+    /* Altri stili desiderati */
+}
+
 .update-input{
     border: 2px solid red;
 }
