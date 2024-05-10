@@ -112,6 +112,20 @@ recordRoutes.route("/record/delete/:azienda/:serial").delete(function (req, res)
     });
 });
 
+recordRoutes.route("/pic/:azienda/:serial").put(function (req, res) {
+  const azienda = req.params.azienda;
+  const serial = req.params.serial;
+  const flagValue = req.body.flagValue;
+  db.query(`UPDATE dbo.${azienda}ZUAPPAHR SET FLIMPO = '${flagValue}' WHERE SERIAL = '${serial}'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 // This section will help you create a new record.
 recordRoutes.route("/record/add/:azienda").post(function (req, res) {
   const azienda = req.params.azienda;

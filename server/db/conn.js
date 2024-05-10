@@ -18,7 +18,7 @@ const sql = require('mssql');
 const config = {
   user: 'sa',       // Nome utente del database SQL Server
   password: 'zutec0123',   // Password del database SQL Server // admin
-  server: '192.168.1.120',    // Indirizzo del server del database SQL Server //127.0.0.1
+  server: '192.168.1.116',    // Indirizzo del server del database SQL Server //127.0.0.1
   port: 1433,             // Porta del server del database SQL Server (di solito 1433)
   database: 'AHR_NICO',// Nome del database SQL Server
   stream: false, 

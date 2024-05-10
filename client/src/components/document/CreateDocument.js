@@ -36,7 +36,7 @@ const CreateDocument = () => {
         unimis: '',
         quanti: 1,
         codmat: '',
-        magpar: '',
+        magpar: 'SEDE ',
         magdes: '',
         clientSearch: '',
         search: '',
@@ -61,6 +61,16 @@ const CreateDocument = () => {
     const [docType, setDocType] = useState([]);
     const [mag, setMag] = useState([]);
     const [hasCauCol, setHasCauCol] = useState(false);
+    function generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let randomString = '';
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          randomString += characters.charAt(randomIndex);
+        }
+        return randomString;
+      }
+    const [checkModficato, setCheckModificato] = useState(generateRandomString(10));
     const formRef = useRef(null);
     const cards = useRef(null);
     const [aaa,setA]=useState(false);
@@ -289,6 +299,7 @@ const CreateDocument = () => {
             ...formData,
             serial: newSerial,
             insuser: md5(username).toString().substring(0, 20),
+            cpccchk: checkModficato,
             rownum: (rows.length + 1) * 10,
             matricole: currentMat,
             // unimis: formData.unimis,
@@ -430,8 +441,7 @@ const CreateDocument = () => {
     }
 
     const test=()=>{
-        console.log("selected.matricola : "+formData.codmat);
-
+        console.log("");
         setA(!aaa)
     }
 

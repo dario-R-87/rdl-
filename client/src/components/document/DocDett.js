@@ -28,7 +28,7 @@ const DocDett = ({ serial }) => {
         unimis: '',
         quanti: 1,
         codmat: '',
-        magpar: '',
+        magpar: 'SEDE ',
         magdes: '',
         clientSearch: '',
         search: '',
@@ -55,6 +55,16 @@ const DocDett = ({ serial }) => {
     const [hasCauCol, setHasCauCol] = useState(false);
     const [loading, setLoading] = useState(true);
     const [editable, setEditable] = useState(false);
+    function generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let randomString = '';
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          randomString += characters.charAt(randomIndex);
+        }
+        return randomString;
+      }
+    const [checkModficato, setCheckModificato] = useState(generateRandomString(10));
     const formRef = useRef(null);
     const cards = useRef(null);
 
@@ -170,6 +180,7 @@ const DocDett = ({ serial }) => {
                     codcon: item.CODCON,
                     tipcon: item.TIPCON,
                     flimpo: item.FLIMPO,
+                    cpccchk: item.cpccchk,
                     // desc: '',
                     // matricole: [],
                     // unimis1: "",
@@ -237,44 +248,81 @@ const DocDett = ({ serial }) => {
         }
     };
 
+    const controllaSeModificato = async () => {
+        try {
+            const response = await fetch(`http://192.168.1.29:5000/documento/${azienda}/${serial}`);
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            const records = await response.json();
+            //MAP DEI RECORD
+            // console.log(rows)
+            // console.log(records[0].cpccchk+" "+rows[0].cpccchk)
+            if(records[0].cpccchk===rows[0].cpccchk){
+                return false;
+            } else {
+                return true;
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
     const handleSubmit = async () => {
         const conferma = window.confirm("Sei sicuro di voler salvare il documento?");
+        const modificatoFlag = await controllaSeModificato();
         if (conferma) {
-            if (rows.length === 0)
-                alert("Nessura riga inserita");
-            else {
-                try {
-                    const response = await fetch(`http://192.168.1.29:5000/record/delete/${azienda}/${serial}`, {
-                        method: "DELETE",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    });
-                    if (!response.ok) {
-                        throw new Error(`An error occurred: ${response.statusText}`);
+            if(modificatoFlag){
+                alert("Documento modificato da altro utente!")
+            } else {
+                if (rows.length === 0)
+                    alert("Nessura riga inserita");
+                else {
+                    try {
+                        const response = await fetch(`http://192.168.1.29:5000/record/delete/${azienda}/${serial}`, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        });
+                        if (!response.ok) {
+                            throw new Error(`An error occurred: ${response.statusText}`);
+                        }
+                        // rownumRecalc();
+                        // let currentRowNum = 10;
+                        // rows.forEach((row) => {
+                        //     row.rownum = currentRowNum;
+                        //     currentRowNum += 10;
+                        // });
+                        
+                        const rowsConCpccchk = rows.map(row => {
+                            return {
+                                ...row, // Copia tutte le proprietà dell'oggetto originale
+                                cpccchk: checkModficato, // Aggiunge la nuova proprietà checkModificato
+                            };
+                        });
+                        console.log(rowsConCpccchk)
+                        
+                        await Promise.all(rowsConCpccchk.map(postData)); // Esegue tutte le richieste in parallelo
+                        //Se tutte le richieste sono state completate con successo
+                        setFormData({
+                            tipdoc: '',
+                            datadoc: '',
+                            codart: '',
+                            unimis: '',
+                            quanti: 1,
+                            codmat: '',
+                            magpar: 'SEDE '
+                        });
+                        setRows([]);
+                        alert("Documento Modificato!");
+                        navigate('/documenti');
+                    } catch (error) {
+                        // Se una o più richieste hanno fallito, gestisci l'errore qui
+                        window.alert(error.message);
                     }
-                    // rownumRecalc();
-                    // let currentRowNum = 10;
-                    // rows.forEach((row) => {
-                    //     row.rownum = currentRowNum;
-                    //     currentRowNum += 10;
-                    // });
-                    await Promise.all(rows.map(postData)); // Esegue tutte le richieste in parallelo
-                    //Se tutte le richieste sono state completate con successo
-                    setFormData({
-                        tipdoc: '',
-                        datadoc: '',
-                        codart: '',
-                        unimis: '',
-                        quanti: 1,
-                        codmat: '',
-                    });
-                    setRows([]);
-                    alert("Documento Modificato!");
-                    navigate('/documenti');
-                } catch (error) {
-                    // Se una o più richieste hanno fallito, gestisci l'errore qui
-                    window.alert(error.message);
                 }
             }
         }
