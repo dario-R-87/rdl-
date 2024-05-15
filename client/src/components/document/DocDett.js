@@ -17,6 +17,10 @@ import RowsList from './RowsList';
 import { formatISO } from 'date-fns';
 
 const DocDett = ({ serial }) => {
+
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
+    
     const navigate = useNavigate();
     const azienda = localStorage.getItem("azienda")
     const username = localStorage.getItem("username");
@@ -65,6 +69,7 @@ const DocDett = ({ serial }) => {
         return randomString;
       }
     const [checkModficato, setCheckModificato] = useState(generateRandomString(10));
+    const [currentCpccchk, setCurrentCpccchk] = useState("");
     const formRef = useRef(null);
     const cards = useRef(null);
 
@@ -78,7 +83,7 @@ const DocDett = ({ serial }) => {
         try {
             let clifor=null;
             if(tipconParam!==''){
-                const response = await fetch(`http://192.168.1.29:5000/${tipconParam}/${azienda}/${record.CODCON}`);
+                const response = await fetch(`http://${ip}:5000/${tipconParam}/${azienda}/${record.CODCON}`);
 
                 if (!response.ok) {
                     const message = `An error occurred: ${response.statusText}`;
@@ -103,14 +108,14 @@ const DocDett = ({ serial }) => {
 
     const getRowDetails = async (row) => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/artsdata/${azienda}/${row.codart}`);
+            const response = await fetch(`http://${ip}:5000/artsdata/${azienda}/${row.codart}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
                 return;
             }
             const artData = await response.json();
-            const matResponse = await fetch(`http://192.168.1.29:5000/matricole/${azienda}/${row.codart}`);
+            const matResponse = await fetch(`http://${ip}:5000/matricole/${azienda}/${row.codart}`);
             if (!matResponse.ok) {
                 const message = `An error occurred: ${matResponse.statusText}`;
                 window.alert(message);
@@ -153,7 +158,7 @@ const DocDett = ({ serial }) => {
 
     const getDocument = async () => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/documento/${azienda}/${serial}`);
+            const response = await fetch(`http://${ip}:5000/documento/${azienda}/${serial}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -190,6 +195,8 @@ const DocDett = ({ serial }) => {
 
             setRows(formattedRecord)
             setTestata(records[0]);
+            setCurrentCpccchk(records[0].cpccchk)
+            setCheckModificato(generateRandomString(10));
             setLoading(false);
         } catch (error) {
             alert(error.message);
@@ -232,7 +239,7 @@ const DocDett = ({ serial }) => {
 
     const postData = async (row) => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/record/add/${azienda}`, {
+            const response = await fetch(`http://${ip}:5000/record/add/${azienda}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -250,17 +257,14 @@ const DocDett = ({ serial }) => {
 
     const controllaSeModificato = async () => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/documento/${azienda}/${serial}`);
+            const response = await fetch(`http://${ip}:5000/documento/${azienda}/${serial}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
                 return;
             }
             const records = await response.json();
-            //MAP DEI RECORD
-            // console.log(rows)
-            // console.log(records[0].cpccchk+" "+rows[0].cpccchk)
-            if(records[0].cpccchk===rows[0].cpccchk){
+            if(records[0].cpccchk===currentCpccchk){
                 return false;
             } else {
                 return true;
@@ -281,7 +285,7 @@ const DocDett = ({ serial }) => {
                     alert("Nessura riga inserita");
                 else {
                     try {
-                        const response = await fetch(`http://192.168.1.29:5000/record/delete/${azienda}/${serial}`, {
+                        const response = await fetch(`http://${ip}:5000/record/delete/${azienda}/${serial}`, {
                             method: "DELETE",
                             headers: {
                                 "Content-Type": "application/json",
@@ -303,7 +307,7 @@ const DocDett = ({ serial }) => {
                                 cpccchk: checkModficato, // Aggiunge la nuova proprietà checkModificato
                             };
                         });
-                        console.log(rowsConCpccchk)
+                        // console.log(rowsConCpccchk)
                         
                         await Promise.all(rowsConCpccchk.map(postData)); // Esegue tutte le richieste in parallelo
                         //Se tutte le richieste sono state completate con successo
@@ -332,7 +336,7 @@ const DocDett = ({ serial }) => {
         try {
             const tipdoc = docType.filter((tp) => tp.TDTIPDOC.includes(formData.tipdoc));
             if (tipdoc[0]) {
-                const response = await fetch(`http://192.168.1.29:5000/causale_mag/${azienda}/${tipdoc[0].TDCAUMAG}`);
+                const response = await fetch(`http://${ip}:5000/causale_mag/${azienda}/${tipdoc[0].TDCAUMAG}`);
                 if (!response.ok) {
                     const message = `An error occurred: ${response.statusText}`;
                     window.alert(message);
@@ -360,7 +364,7 @@ const DocDett = ({ serial }) => {
 
     const getArtData = async (selected) => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/artsdata/${azienda}/${selected.CACODART}`);
+            const response = await fetch(`http://${ip}:5000/artsdata/${azienda}/${selected.CACODART}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -376,7 +380,7 @@ const DocDett = ({ serial }) => {
 
     const onArtSelect = async (selected) => {
         const artData = await getArtData(selected)
-        console.log(artData.ARUNMIS1)
+        // console.log(artData.ARUNMIS1)
         setFormData({
             ...formData,
             codart: selected.CACODART,
@@ -585,17 +589,17 @@ const DocDett = ({ serial }) => {
     }
 
     const test = () => {
-        console.log(editable)
+        console.log(currentCpccchk)
     }
 
     return (
         <Container className='my-5 py-5'>
-            {/* <button onClick={test}>test</button> */}
+            <button onClick={test}>test</button>
             <Logout />
             <TimerRefresh />
-            <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat} />
-            <DocType onLoadDocType={handleDocType} />
-            <Magazzini onLoadMag={handleMag} />
+            <Matricole ip={ip} serial={currentArt.CACODART} onLoadMat={hanldeMat} />
+            <DocType ip={ip} onLoadDocType={handleDocType} />
+            <Magazzini ip={ip} onLoadMag={handleMag} />
             <div className='my-3 d-flex align-items-center justify-content-between'>
                 <Button variant='success' onClick={()=>{onExit("/documenti")}}>Indietro</Button>
                 <Button variant='secondary' onClick={()=>{onExit("/homepage")}}>Home</Button>
@@ -626,6 +630,7 @@ const DocDett = ({ serial }) => {
                     />
                     <Form.Control placeholder="Descrizione" type="text" name="clientDesc" defaultValue={formData.clientDesc} readOnly disabled />
                     {clientShow && <Clienti 
+                                        ip={ip}
                                         clientShow={clientShow} 
                                         handleClientClose={cliHandler} 
                                         handleClientSelected={onCliSelect} 
@@ -662,7 +667,7 @@ const DocDett = ({ serial }) => {
                             disabled
                         />
                         <Form.Control placeholder="Descrizione" type="text" name="desc" defaultValue={formData.desc} readOnly disabled />
-                        {show && <Articoli show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect} searchValue={formData.search}></Articoli>}
+                        {show && <Articoli ip={ip} show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect} searchValue={formData.search}></Articoli>}
                     </Form.Group>
 
                     <Form.Group controlId="magpar">

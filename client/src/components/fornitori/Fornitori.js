@@ -3,6 +3,8 @@ import { Modal, Button, Card, Form } from 'react-bootstrap';
 import LoadSpinner from "../loading/LoadSpinner";
 
 const Fornitori = ({ clientShow, handleClientClose, handleClientSelected, clientSearchValue }) => {
+    const ip="192.168.1.122";
+
     const azienda = localStorage.getItem("azienda")
     const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -36,7 +38,7 @@ const Fornitori = ({ clientShow, handleClientClose, handleClientSelected, client
     const getClients = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://192.168.1.29:5000/clienti/${azienda}`);
+            const response = await fetch(`http://${ip}:5000/clienti/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);

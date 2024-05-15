@@ -1,13 +1,17 @@
 import React, { useEffect,useState } from 'react'
 import { Container, Table, Button } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { format, parse } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarCheck, faCheckDouble, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faCheckDouble, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
 import "./document.css"
 
 const Documents = () => {
+
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
+    
     const navigate = useNavigate();
     const azienda = localStorage.getItem("azienda")
     const [documents, setDocuments] = useState([]);
@@ -15,7 +19,7 @@ const Documents = () => {
 
     const getDocuments = async () => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/documenti/${azienda}`);
+            const response = await fetch(`http://${ip}:5000/documenti/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -40,7 +44,7 @@ const Documents = () => {
         const conferma = window.confirm("Confermando il documento non vi si potranno più apportare modifiche!");
         if(conferma){
             try {
-                const response = await fetch(`http://192.168.1.29:5000/conferma/${azienda}/${serial}`, {
+                const response = await fetch(`http://${ip}:5000/conferma/${azienda}/${serial}`, {
                     method: "PUT", // Metodo PUT per l'operazione di aggiornamento
                     headers: {
                         "Content-Type": "application/json",
@@ -60,10 +64,17 @@ const Documents = () => {
         }
     }
 
+    const reloadPage = () => {
+        window.location.reload();
+      };
+
     return (
         <Container className='my-5 py-5'>
             <div className='mt-3 mb-5 d-flex justify-content-between'>
-                <h2>Lista Documenti</h2>
+                <div className='d-flex justify-content-between align-items-center gap-2'>
+                    <h2 className='mb-0'>Lista Documenti</h2>
+                    <Link to="/documenti"><button title="Aggiorna" onClick={reloadPage}><FontAwesomeIcon icon={faArrowsRotate} /></button></Link>
+                </div>
                 <Button variant='secondary' onClick={onExit}>Home</Button>
             </div>
             <Table striped bordered hover>

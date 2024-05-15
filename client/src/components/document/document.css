@@ -30,6 +30,11 @@ a {
     color: red;
 }
 
+.fa-arrows-rotate{
+    color: rgb(35, 153, 231);
+    font-size: 26px;
+}
+
 button {
     border: none;
     margin: 0;

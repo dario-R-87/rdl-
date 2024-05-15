@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 // import md5 from 'crypto-js/md5';
 
 const Login = () => {
+    
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
 
     // Funzione per calcolare l'hash MD5 di una stringa
     // function calculateMD5(inputString) {
@@ -28,7 +31,7 @@ const Login = () => {
 
     const getAziende = async () => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/aziende`);
+            const response = await fetch(`http://${ip}:5000/aziende`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -43,7 +46,7 @@ const Login = () => {
 
     const getUsers = async () => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/users`);
+            const response = await fetch(`http://${ip}:5000/users`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);

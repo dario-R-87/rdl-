@@ -3,13 +3,14 @@ import { Modal, Button } from 'react-bootstrap';
 import Articoli from './Articoli';
 
 const ArtModal = ({ show, handleClose, handleArticoloSelect }) => {
+    const ip="192.168.1.122";
     const [articoli, setArticoli] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     // This method fetches the records from the database.
     useEffect(() => {
         async function getArticoli() {
             setIsLoading(true);
-            const response = await fetch("http://localhost:5000/articoli");
+            const response = await fetch(`http://${ip}:5000/articoli`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);

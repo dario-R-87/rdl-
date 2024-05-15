@@ -3,7 +3,8 @@ import { Modal, Button, Card, Form } from 'react-bootstrap';
 import LoadSpinner from "../loading/LoadSpinner";
 
 
-const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
+const Articoli = ({ ip, show, handleClose, handleArticoloSelect, searchValue }) => {
+    
     const azienda = localStorage.getItem("azienda")
     const [articoli, setArticoli] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -67,7 +68,7 @@ const Articoli = ({ show, handleClose, handleArticoloSelect, searchValue }) => {
     const getArticoli = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://192.168.1.29:5000/articoli/${azienda}`);
+            const response = await fetch(`http://${ip}:5000/articoli/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);

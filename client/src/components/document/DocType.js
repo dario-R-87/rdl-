@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 
-const DocType = ({ onLoadDocType }) => {
+const DocType = ({ ip, onLoadDocType }) => {
+
     const azienda = localStorage.getItem("azienda")
 
     const getDocType = async () => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/doctype/${azienda}`);
+            const response = await fetch(`http://${ip}:5000/doctype/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Card, Form } from 'react-bootstrap';
 import LoadSpinner from "../loading/LoadSpinner";
 
-const Clienti = ({ clientShow, handleClientClose, handleClientSelected, clientSearchValue, type }) => {
+const Clienti = ({ ip, clientShow, handleClientClose, handleClientSelected, clientSearchValue, type }) => {
+
     const azienda = localStorage.getItem("azienda")
     const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ const Clienti = ({ clientShow, handleClientClose, handleClientSelected, clientSe
     const getClients = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://192.168.1.29:5000/${type}/${azienda}`);
+            const response = await fetch(`http://${ip}:5000/${type}/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);

@@ -1,14 +1,14 @@
 import  { useEffect } from 'react';
 
 
-const Matricole = ({serial, onLoadMat}) => {
+const Matricole = ({ip, serial, onLoadMat}) => {
 
     const azienda = localStorage.getItem("azienda")
 
     const getMatricole = async () => {
         if(serial!==""){
             try {
-                const response = await fetch(`http://192.168.1.29:5000/matricole/${azienda}/${serial.trim()}`);
+                const response = await fetch(`http://${ip}:5000/matricole/${azienda}/${serial.trim()}`);
                 if (!response.ok) {
                     const message = `An error occurred: ${response.statusText}`;
                     window.alert(message);

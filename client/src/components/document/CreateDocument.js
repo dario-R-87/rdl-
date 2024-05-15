@@ -16,6 +16,9 @@ import TimerRefresh from '../timerRefresh/TimerRefresh';
 
 const CreateDocument = () => {
 
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
+
     const navigate = useNavigate();
     const getCurrentDate = () => {
         const today = new Date();
@@ -82,7 +85,7 @@ const CreateDocument = () => {
 
     useEffect(() => {
         async function getMaxSerial() {
-            const response = await fetch(`http://192.168.1.29:5000/new_serial/${azienda}`);
+            const response = await fetch(`http://${ip}:5000/new_serial/${azienda}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -132,7 +135,7 @@ const CreateDocument = () => {
 
     const postData = async (row) => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/record/add/${azienda}`, {
+            const response = await fetch(`http://${ip}:5000/record/add/${azienda}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -206,7 +209,7 @@ const CreateDocument = () => {
         try {
             const tipdoc = docType.filter((tp)=>tp.TDTIPDOC.includes(formData.tipdoc));
             setFormData({...formData, tipcon: tipdoc[0].TDFLINTE});
-            const response = await fetch(`http://192.168.1.29:5000/causale_mag/${azienda}/${tipdoc[0].TDCAUMAG}`);
+            const response = await fetch(`http://${ip}:5000/causale_mag/${azienda}/${tipdoc[0].TDCAUMAG}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -233,7 +236,7 @@ const CreateDocument = () => {
 
     const getArtData = async (selected) => {
         try {
-            const response = await fetch(`http://192.168.1.29:5000/artsdata/${azienda}/${selected.CACODART}`);
+            const response = await fetch(`http://${ip}:5000/artsdata/${azienda}/${selected.CACODART}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
@@ -450,9 +453,9 @@ const CreateDocument = () => {
             {/* <button onClick={test}>test</button> */}
             <Logout />
             <TimerRefresh />
-            <Matricole serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
-            <DocType onLoadDocType={handleDocType}/>
-            <Magazzini onLoadMag={handleMag}/>
+            <Matricole ip={ip} serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
+            <DocType ip={ip} onLoadDocType={handleDocType}/>
+            <Magazzini ip={ip} onLoadMag={handleMag}/>
             <div className='my-3 d-flex justify-content-between'>
                 {/* <Link to="/homepage"><Button variant='secondary'>Home</Button></Link> */}
                 <h2>Nuovo Documento</h2>
@@ -494,6 +497,7 @@ const CreateDocument = () => {
                     />
                     <Form.Control placeholder="Descrizione" type="text" name="clientDesc" defaultValue={formData.clientDesc} readOnly disabled />
                     {clientShow && <Clienti 
+                                        ip={ip}
                                         clientShow={clientShow} 
                                         handleClientClose={cliHandler} 
                                         handleClientSelected={onCliSelect} 
@@ -533,7 +537,7 @@ const CreateDocument = () => {
                         disabled
                     />
                     <Form.Control placeholder="Descrizione" type="text" name="desc" defaultValue={formData.desc} readOnly disabled />
-                    {show && <Articoli show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect} searchValue={formData.search}></Articoli>}
+                    {show && <Articoli ip={ip} show={show} handleClose={artHandler} handleArticoloSelect={onArtSelect} searchValue={formData.search}></Articoli>}
                 </Form.Group>
 
                 <Form.Group controlId="magpar">
