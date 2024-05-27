@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 const Aziende = ({onLoadAz}) => {
 
-    // const ip="192.168.1.122";
-    const ip="192.168.5.87";
+    const ip="192.168.1.122";
+    // const ip="192.168.5.87";
     
     const getAziende = async () => {
         try {
