@@ -16,8 +16,8 @@ import TimerRefresh from '../timerRefresh/TimerRefresh';
 
 const CreateDocument = () => {
 
-    const ip="192.168.1.122";
-    // const ip="192.168.5.87";
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
 
     const navigate = useNavigate();
     const getCurrentDate = () => {
@@ -76,6 +76,7 @@ const CreateDocument = () => {
     const [checkModficato, setCheckModificato] = useState(generateRandomString(10));
     const formRef = useRef(null);
     const cards = useRef(null);
+    const codartInputRef = useRef(null);
     const [aaa,setA]=useState(false);
 
     useEffect(()=>{
@@ -100,6 +101,9 @@ const CreateDocument = () => {
             }
         }
         getMaxSerial();
+        if (codartInputRef.current) {
+            codartInputRef.current.focus();
+        }
         return;
     }, [isTestataSave])
 
@@ -191,14 +195,17 @@ const CreateDocument = () => {
         if(!formData.tipdoc.includes("DDT")){
             if(formData.datadoc!=="" && formData.tipdoc!==""){
                 setIsTestataSave(true)
-                handleCauCol()    
+                handleCauCol()
             }
             else
                 alert("Inserire tipo e data documento!")
         } else {
             if(formData.datadoc!=="" && formData.tipdoc!=="" && formData.codcon!==""){
                 setIsTestataSave(true)
-                handleCauCol()    
+                handleCauCol()
+                if (codartInputRef.current) {
+                    codartInputRef.current.focus();
+                }
             }
             else
                 alert("Inserire tipo, data documento e cliente/fornitore!")
@@ -315,9 +322,12 @@ const CreateDocument = () => {
         rownumRecalc();
         // if (rows.length === 0)
         //     setIsTestataSave(true)
-        if(cards.current) {
-            // Usa il metodo scrollIntoView() per scorrere fino al form
-            cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        // if(cards.current) {
+        //     // Usa il metodo scrollIntoView() per scorrere fino al form
+        //     cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        // }
+        if (codartInputRef.current) {
+            codartInputRef.current.focus();
         }
     }
 
@@ -397,6 +407,13 @@ const CreateDocument = () => {
             // Resetta il formData
             resetByUpdate();
             alert("Riga Aggiornata");
+            // if(cards.current) {
+            //     // Usa il metodo scrollIntoView() per scorrere fino al form
+            //     cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
+            // }
+            if (codartInputRef.current) {
+                codartInputRef.current.focus();
+            }
         }
     }
 
@@ -526,6 +543,7 @@ const CreateDocument = () => {
                             name="search"
                             value={formData.search}
                             onChange={handleChange}
+                            ref={codartInputRef}
                         />
                         <Button onClick={artHandler}><FontAwesomeIcon icon={faSearch} /></Button>
                     </div>

@@ -18,8 +18,8 @@ import { formatISO } from 'date-fns';
 
 const DocDett = ({ serial }) => {
 
-    const ip="192.168.1.122";
-    // const ip="192.168.5.87";
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
     
     const navigate = useNavigate();
     const azienda = localStorage.getItem("azienda")
@@ -72,6 +72,7 @@ const DocDett = ({ serial }) => {
     const [currentCpccchk, setCurrentCpccchk] = useState("");
     const formRef = useRef(null);
     const cards = useRef(null);
+    const codartInputRef = useRef(null);
 
     const setTestata = async (record) => {
         let tipconParam = '';
@@ -438,9 +439,12 @@ const DocDett = ({ serial }) => {
         alert("Riga Aggiunta")
         resetByUpdate();
         rownumRecalc();
-        if (cards.current) {
-            // Usa il metodo scrollIntoView() per scorrere fino al form
-            cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        // if (cards.current) {
+        //     // Usa il metodo scrollIntoView() per scorrere fino al form
+        //     cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        // }
+        if (codartInputRef.current) {
+            codartInputRef.current.focus();
         }
     }
 
@@ -538,6 +542,9 @@ const DocDett = ({ serial }) => {
                 // Usa il metodo scrollIntoView() per scorrere fino al form
                 cards.current.scrollIntoView({ behavior: "smooth", block: "start" });
             }
+            if (codartInputRef.current) {
+                codartInputRef.current.focus();
+            }
         }
     }
 
@@ -594,7 +601,7 @@ const DocDett = ({ serial }) => {
 
     return (
         <Container className='my-5 py-5'>
-            <button onClick={test}>test</button>
+            {/* <button onClick={test}>test</button> */}
             <Logout />
             <TimerRefresh />
             <Matricole ip={ip} serial={currentArt.CACODART} onLoadMat={hanldeMat} />
@@ -656,6 +663,7 @@ const DocDett = ({ serial }) => {
                                 name="search"
                                 value={formData.search}
                                 onChange={handleChange}
+                                ref={codartInputRef}
                             />                            
                             <Button onClick={artHandler}><FontAwesomeIcon icon={faSearch} /></Button>
                         </div>
