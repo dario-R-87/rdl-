@@ -9,6 +9,8 @@ import "./document.css"
 import Matricole from '../matricole/Matricole';
 import DocType from './DocType';
 import Magazzini from '../magazzini/Magazzini';
+import Commesse from '../commesse/Commesse'
+import Attivita from '../attivita/Attivita';
 import Clienti from '../clienti/Clienti';
 import md5 from 'crypto-js/md5';
 import Logout from '../pages/Logout';
@@ -16,8 +18,8 @@ import TimerRefresh from '../timerRefresh/TimerRefresh';
 
 const CreateDocument = () => {
 
-    // const ip="192.168.1.122";
-    const ip="192.168.5.87";
+    const ip="192.168.1.122";
+    // const ip="192.168.5.87";
 
     const navigate = useNavigate();
     const getCurrentDate = () => {
@@ -46,6 +48,8 @@ const CreateDocument = () => {
         clientDesc: '',
         desc: '',
         mat_barcode: '',
+        commessa: '',
+        attivita: ''
     });
     const [rows, setRows] = useState([]);
     const [isTestataSave, setIsTestataSave] = useState(false)
@@ -63,6 +67,8 @@ const CreateDocument = () => {
     const [currentMat, setCurrentMat] = useState([]);
     const [docType, setDocType] = useState([]);
     const [mag, setMag] = useState([]);
+    const [coms, setComs] = useState([]);
+    const [atts, setAtts] = useState([]);
     const [hasCauCol, setHasCauCol] = useState(false);
     function generateRandomString(length) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -74,6 +80,7 @@ const CreateDocument = () => {
         return randomString;
       }
     const [checkModficato, setCheckModificato] = useState(generateRandomString(10));
+    const [commessaKey, setCommessaKey] = useState(0);
     const formRef = useRef(null);
     const cards = useRef(null);
     const codartInputRef = useRef(null);
@@ -101,11 +108,16 @@ const CreateDocument = () => {
             }
         }
         getMaxSerial();
-        if (codartInputRef.current) {
+        if (codartInputRef.current && isTestataSave) {
             codartInputRef.current.focus();
         }
         return;
     }, [isTestataSave])
+
+    useEffect(() => {
+        // Incrementa la chiave per forzare il ri-render del componente Attivita
+        setCommessaKey(prevKey => prevKey + 1);
+      }, [formData.commessa]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;       
@@ -137,7 +149,7 @@ const CreateDocument = () => {
         });
     }
 
-    const postData = async (row) => {
+    const postData = async (row) => {console.log(row)
         try {
             const response = await fetch(`http://${ip}:5000/record/add/${azienda}`, {
                 method: "POST",
@@ -178,6 +190,8 @@ const CreateDocument = () => {
                         codmat: '',
                         codcon: '',
                         tipcon: '',
+                        commessa: '',
+                        attivita: '',
                     });
                     setIsTestataSave(false);
                     setRows([]);
@@ -192,23 +206,46 @@ const CreateDocument = () => {
     };
 
     const salvaTestata = () => {
-        if(!formData.tipdoc.includes("DDT")){
-            if(formData.datadoc!=="" && formData.tipdoc!==""){
-                setIsTestataSave(true)
-                handleCauCol()
-            }
-            else
-                alert("Inserire tipo e data documento!")
+        // if(!formData.tipdoc.includes("DDT")){
+        //     if(formData.datadoc!=="" && formData.tipdoc!=="" && formData.commessa!=="" && formData.attivita!==""){
+        //         setIsTestataSave(true)
+        //         handleCauCol()
+        //     }
+        //     else
+        //         alert("Si prega di compilare tutti i campi della testata!")
+        // } else {
+        //     if(formData.datadoc!=="" && formData.tipdoc!=="" && formData.codcon!=="" && formData.commessa!=="" && formData.attivita!==""){
+        //         setIsTestataSave(true)
+        //         handleCauCol()
+        //         if (codartInputRef.current) {
+        //             codartInputRef.current.focus();
+        //         }
+        //     }
+        //     else
+        //         alert("Si prega di compilare tutti i campi della testata!")
+        // }
+
+        if(formData.datadoc==="" || formData.tipdoc==="" || formData.commessa==="" || formData.attivita===""){
+            alert("Si prega di compilare tutti i campi della testata!");
         } else {
-            if(formData.datadoc!=="" && formData.tipdoc!=="" && formData.codcon!==""){
+            if(!hasClient() && !hasForn()){
                 setIsTestataSave(true)
                 handleCauCol()
                 if (codartInputRef.current) {
                     codartInputRef.current.focus();
                 }
+            } else {
+                if(formData.codcon===""){
+                    alert("Si prega di compilare tutti i campi della testata!");
+                } else {
+                    setIsTestataSave(true)
+                    handleCauCol()
+                    if (codartInputRef.current) {
+                        codartInputRef.current.focus();
+                    }
+                }
+
             }
-            else
-                alert("Inserire tipo, data documento e cliente/fornitore!")
         }
     }
 
@@ -425,6 +462,14 @@ const CreateDocument = () => {
         setMag(records);
     }
 
+    const handleCom = (records) => {
+        setComs(records);
+    }
+
+    const handleAtt = (records) => {
+        setAtts(records);
+    }
+
     const hasClient = () => {
         if(formData.tipdoc){
             const docTypeSel = docType.filter((item)=>{
@@ -461,7 +506,7 @@ const CreateDocument = () => {
     }
 
     const test=()=>{
-        console.log("");
+        console.log("has client: "+hasClient()+"\nhas forn: "+hasForn());
         setA(!aaa)
     }
 
@@ -473,6 +518,8 @@ const CreateDocument = () => {
             <Matricole ip={ip} serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType ip={ip} onLoadDocType={handleDocType}/>
             <Magazzini ip={ip} onLoadMag={handleMag}/>
+            <Commesse ip={ip} onLoadCom={handleCom}/>
+            <Attivita ip={ip} onLoadAtt={handleAtt} commessa={formData.commessa} key={commessaKey}/>
             <div className='my-3 d-flex justify-content-between'>
                 {/* <Link to="/homepage"><Button variant='secondary'>Home</Button></Link> */}
                 <h2>Nuovo Documento</h2>
@@ -521,7 +568,39 @@ const CreateDocument = () => {
                                         clientSearchValue={formData.clientSearch}
                                         type={hasClient() ? "clienti" : "fornitori"}>
                                     </Clienti>}
-                </Form.Group>}   
+                </Form.Group>} 
+
+                <Form.Group controlId="commessa">
+                    <Form.Label className='custom-label mt-3'>Commessa</Form.Label>
+                    <Form.Control
+                        required as="select"
+                        name="commessa"
+                        value={formData.commessa}
+                        onChange={handleChange}
+                        className={update.updating ? 'update-input' : ''}
+                        disabled={isTestataSave} >
+                        <option value=""></option>
+                        {coms.map((com) => {
+                            return <option key={com.CNCODCAN} value={com.CNCODCAN}>{com.CNDESCAN}</option>
+                        })}
+                    </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="attivita">
+                    <Form.Label className='custom-label mt-3'>Attività</Form.Label>
+                    <Form.Control
+                        required as="select"
+                        name="attivita"
+                        value={formData.attivita}
+                        onChange={handleChange}
+                        className={update.updating ? 'update-input' : ''}
+                        disabled={isTestataSave} >
+                        <option value=""></option>
+                        {atts.map((att) => {
+                            return <option key={att.ATCODATT} value={att.ATCODATT}>{att.ATDESCRI}</option>
+                        })}
+                    </Form.Control>
+                </Form.Group>  
 
                 {!isTestataSave && <div>
                     <Button className="mt-3" variant="success" onClick={salvaTestata}>

@@ -1,29 +1,30 @@
 import { useEffect } from 'react';
 
-const Users = ({ onLoadUsers }) => {
+const Attivita = ({ip, onLoadAtt, commessa }) => {
 
-    const ip="192.168.1.122";
-    // const ip="192.168.5.87";
-    
-    const getUsers = async () => {
+    const azienda = localStorage.getItem("azienda")
+
+    const getAtt = async () => {
         try {
-            const response = await fetch(`http://${ip}:5000/users`);
+            const response = await fetch(`http://${ip}:5000/attivita/${azienda}/${commessa}`);
             if (!response.ok) {
                 const message = `An error occurred: ${response.statusText}`;
                 window.alert(message);
                 return;
             }
             let records = await response.json();
-            onLoadUsers(records)
+            onLoadAtt(records)
         } catch (error) {
-            return;
+            alert(error.message);
         }
     };
 
     useEffect(() => {
-        getUsers();
+        if(commessa.trim()!=='')
+            getAtt();
     }, []);
+
     return null;
 }
 
-export default Users
+export default Attivita;

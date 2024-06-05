@@ -18,8 +18,8 @@ import { formatISO } from 'date-fns';
 
 const DocDett = ({ serial }) => {
 
-    // const ip="192.168.1.122";
-    const ip="192.168.5.87";
+    const ip="192.168.1.122";
+    // const ip="192.168.5.87";
     
     const navigate = useNavigate();
     const azienda = localStorage.getItem("azienda")
@@ -40,6 +40,8 @@ const DocDett = ({ serial }) => {
         desc: '',
         codcon: '',
         mat_barcode: '',
+        commessa: {},
+        attivita: {},
     });
     const [rows, setRows] = useState([]);
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
@@ -74,6 +76,36 @@ const DocDett = ({ serial }) => {
     const cards = useRef(null);
     const codartInputRef = useRef(null);
 
+    const getCommAttDescri = async (codcomm, codatt) => {
+        let commessa = {};
+        let attivita = {};
+        try {
+            const response = await fetch(`http://${ip}:5000/commessa/${azienda}/${codcomm}`);
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            let records = await response.json();
+            commessa = records[0];
+        } catch (error) {
+            alert(error.message);
+        }
+        try {
+            const response = await fetch(`http://${ip}:5000/attivita/${azienda}/${codcomm}/${codatt}`);
+            if (!response.ok) {
+                const message = `An error occurred: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+            let records = await response.json();
+            attivita = records[0];
+        } catch (error) {
+            alert(error.message);
+        }
+        return {commessa, attivita}
+    }
+
     const setTestata = async (record) => {
         let tipconParam = '';
         if(record.TIPCON==='C')
@@ -93,6 +125,8 @@ const DocDett = ({ serial }) => {
                 }
                 clifor = await response.json();
             }
+            const {commessa, attivita} = await getCommAttDescri(record.ZUCODCOM, record.ZUCODATT);
+            // console.log(commessa);console.log(attivita);
             const data = formatISO(new Date(record.DATDOC), { representation: 'date' });
             setFormData({
                 ...formData,
@@ -101,6 +135,10 @@ const DocDett = ({ serial }) => {
                 codcon: record.CODCON,
                 tipcon: record.TIPCON,
                 clientDesc: clifor ? clifor[0].ANDESCRI : '',
+                commessa: commessa.CNCODCAN,
+                attivita: attivita.ATCODATT,
+                comDescri: commessa.CNDESCAN,
+                attDesci: attivita.ATDESCRI,
             })
         } catch (error) {
             alert(error.message);
@@ -187,6 +225,8 @@ const DocDett = ({ serial }) => {
                     tipcon: item.TIPCON,
                     flimpo: item.FLIMPO,
                     cpccchk: item.cpccchk,
+                    commessa: item.ZUCODCOM,
+                    attivita: item.ZUCODATT,
                     // desc: '',
                     // matricole: [],
                     // unimis1: "",
@@ -596,7 +636,7 @@ const DocDett = ({ serial }) => {
     }
 
     const test = () => {
-        console.log(currentCpccchk)
+        console.log(formData)
     }
 
     return (
@@ -645,6 +685,16 @@ const DocDett = ({ serial }) => {
                                         type={hasClient() ? "clienti" : "fornitori"}>
                                     </Clienti>}
                 </Form.Group>}
+
+                <Form.Group controlId="commessa">
+                    <Form.Label className='custom-label mt-3'>Commessa</Form.Label>
+                    <Form.Control required type="text" name="commessa" value={formData.comDescri} onChange={handleChange} disabled />
+                </Form.Group>
+
+                <Form.Group controlId="attivita">
+                    <Form.Label className='custom-label mt-3'>Attività</Form.Label>
+                    <Form.Control required type="text" name="attivita" value={formData.attDesci} onChange={handleChange} disabled />
+                </Form.Group>
 
                 {!loading && <div ref={cards}><RowsList rows={rows} handleDelete={onDelete} handleUpdate={onUpdate} /></div>}
 
