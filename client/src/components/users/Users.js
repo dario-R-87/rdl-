@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 const Users = ({ onLoadUsers }) => {
 
-    const ip="192.168.1.122";
-    // const ip="192.168.5.87";
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
     
     const getUsers = async () => {
         try {

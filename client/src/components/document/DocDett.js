@@ -18,8 +18,8 @@ import { formatISO } from 'date-fns';
 
 const DocDett = ({ serial }) => {
 
-    const ip="192.168.1.122";
-    // const ip="192.168.5.87";
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
     
     const navigate = useNavigate();
     const azienda = localStorage.getItem("azienda")
@@ -688,7 +688,7 @@ const DocDett = ({ serial }) => {
 
                 <Form.Group controlId="commessa">
                     <Form.Label className='custom-label mt-3'>Commessa</Form.Label>
-                    <Form.Control required type="text" name="commessa" value={formData.comDescri} onChange={handleChange} disabled />
+                    <Form.Control required type="text" name="commessa" value={formData.commessa} onChange={handleChange} disabled />
                 </Form.Group>
 
                 <Form.Group controlId="attivita">

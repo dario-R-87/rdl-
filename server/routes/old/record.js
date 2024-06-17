@@ -112,6 +112,20 @@ recordRoutes.route("/record/delete/:azienda/:serial").delete(function (req, res)
     });
 });
 
+recordRoutes.route("/pic/:azienda/:serial").put(function (req, res) {
+  const azienda = req.params.azienda;
+  const serial = req.params.serial;
+  const flagValue = req.body.flagValue;
+  db.query(`UPDATE dbo.${azienda}ZUAPPAHR SET FLIMPO = '${flagValue}' WHERE SERIAL = '${serial}'`)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      console.error("Errore nel recupero dei dati:", err);
+      res.status(500).json({ error: "Errore nel recupero dei dati" });
+    });
+});
+
 // This section will help you create a new record.
 recordRoutes.route("/record/add/:azienda").post(function (req, res) {
   const azienda = req.params.azienda;
@@ -128,34 +142,17 @@ recordRoutes.route("/record/add/:azienda").post(function (req, res) {
     magpar,
     magdes,
     insuser,
-    rownum,
-    cpccchk,
-    commessa,
-    attivita,
+    rownum
   } = req.body; // Assumendo che il body della richiesta contenga i dati per il nuovo record
 
-  db.query(`INSERT INTO dbo.${azienda}ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODCON, TIPCON, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM, FLIMPO, cpccchk, ZUCODCOM, ZUCODATT) VALUES
-  ('${serial}', '${tipdoc}', '${datadoc}', '${codcon}', '${tipcon}','${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${magdes}', '${insuser}', ${rownum}, 'P', '${cpccchk}', '${commessa}', '${attivita}')`)
+  db.query(`INSERT INTO dbo.${azienda}ZUAPPAHR (SERIAL, TIPDOC, DATDOC, CODCON, TIPCON, CODART, UNIMIS, QUANTI, CODMAT, MAGPAR, MAGDES, INSUSER, ROWNUM, FLIMPO) VALUES
+  ('${serial}', '${tipdoc}', '${datadoc}', '${codcon}', '${tipcon}','${codart}', '${unimis}', ${quanti}, '${codmat}', '${magpar}', '${magdes}', '${insuser}', ${rownum}, 'P')`)
     .then(result => {
       res.status(201).json({ message: "Record aggiunto con successo" });
     })
     .catch(err => {
       console.error("Errore nell'aggiunta del record:", err);
       res.status(500).json({ error: "Errore nell'aggiunta del record" });
-    });
-});
-
-recordRoutes.route("/pic/:azienda/:serial").put(function (req, res) {
-  const azienda = req.params.azienda;
-  const serial = req.params.serial;
-  const flagValue = req.body.flagValue;
-  db.query(`UPDATE dbo.${azienda}ZUAPPAHR SET FLIMPO = '${flagValue}' WHERE SERIAL = '${serial}'`)
-    .then(result => {
-      res.json(result);
-    })
-    .catch(err => {
-      console.error("Errore nel recupero dei dati:", err);
-      res.status(500).json({ error: "Errore nel recupero dei dati" });
     });
 });
 
@@ -263,60 +260,6 @@ recordRoutes.route("/fornitori/:azienda/:serial").get(function (req, res) {
   const serial = req.params.serial;
   db.query(`SELECT ANDESCRI FROM dbo.${azienda}CONTI WHERE 
   ANTIPCON='F' AND ANCODICE='${serial}'`)
-    .then(result => {
-      res.json(result);
-    })
-    .catch(err => {
-      console.error("Errore nel recupero dei dati:", err);
-      res.status(500).json({ error: "Errore nel recupero dei dati" });
-    });
-});
-
-recordRoutes.route("/commesse/:azienda").get(function (req, res) {
-  const azienda = req.params.azienda;
-  db.query(`SELECT * FROM dbo.${azienda}CAN_TIER WHERE (CNDTOBSO IS NULL OR CNDTOBSO > GETDATE())`)
-    .then(result => {
-      res.json(result);
-    })
-    .catch(err => {
-      console.error("Errore nel recupero dei dati:", err);
-      res.status(500).json({ error: "Errore nel recupero dei dati" });
-    });
-});
-
-recordRoutes.route("/commessa/:azienda/:codcom").get(function (req, res) {
-  const codcom = req.params.codcom;
-  const azienda = req.params.azienda;
-  db.query(`SELECT * FROM dbo.${azienda}CAN_TIER WHERE CNCODCAN='${codcom}'`)
-    .then(result => {
-      res.json(result);
-    })
-    .catch(err => {
-      console.error("Errore nel recupero dei dati:", err);
-      res.status(500).json({ error: "Errore nel recupero dei dati" });
-    });
-});
-
-recordRoutes.route("/attivita/:azienda/:commessa").get(function (req, res) {
-  const azienda = req.params.azienda;
-  const commessa = req.params.commessa;
-
-  db.query(`SELECT * FROM dbo.${azienda}ATTIVITA WHERE ATTIPATT='A' AND ATCODCOM='${commessa}'`)
-    .then(result => {
-      res.json(result);
-    })
-    .catch(err => {
-      console.error("Errore nel recupero dei dati:", err);
-      res.status(500).json({ error: "Errore nel recupero dei dati" });
-    });
-});
-
-recordRoutes.route("/attivita/:azienda/:commessa/:codatt").get(function (req, res) {
-  const azienda = req.params.azienda;
-  const commessa = req.params.commessa;
-  const attivita = req.params.codatt;
-
-  db.query(`SELECT * FROM dbo.${azienda}ATTIVITA WHERE ATTIPATT='A' AND ATCODCOM='${commessa}' AND ATCODATT='${attivita}'`)
     .then(result => {
       res.json(result);
     })

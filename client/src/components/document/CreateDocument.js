@@ -18,8 +18,8 @@ import TimerRefresh from '../timerRefresh/TimerRefresh';
 
 const CreateDocument = () => {
 
-    const ip="192.168.1.122";
-    // const ip="192.168.5.87";
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
 
     const navigate = useNavigate();
     const getCurrentDate = () => {
@@ -49,8 +49,9 @@ const CreateDocument = () => {
         desc: '',
         mat_barcode: '',
         commessa: '',
-        attivita: ''
+        attivita: '',
     });
+    const [commSearch, setCommSearch] = useState("");
     const [rows, setRows] = useState([]);
     const [isTestataSave, setIsTestataSave] = useState(false)
     const [update, setUpdate] = useState({ updating: false, rownum: 0 })
@@ -133,6 +134,8 @@ const CreateDocument = () => {
                 [name]: value.substring(formData.mat_barcode.length),
                 codmat: value.substring(formData.mat_barcode.length),
             });
+        } else if(name==='commSearch'){
+                    setCommSearch(value);
         } else {
             setFormData({
                 ...formData,
@@ -505,8 +508,15 @@ const CreateDocument = () => {
         }
     }
 
+    useEffect(()=>{
+        if(coms.length==1){
+            setFormData({...formData, commessa: coms[0].CNCODCAN});
+            setCommSearch('');
+        }
+    }, [coms.length])
+
     const test=()=>{
-        console.log("has client: "+hasClient()+"\nhas forn: "+hasForn());
+        console.log("comm length: " + coms.length);
         setA(!aaa)
     }
 
@@ -518,7 +528,7 @@ const CreateDocument = () => {
             <Matricole ip={ip} serial={currentArt.CACODART} onLoadMat={hanldeMat}/>
             <DocType ip={ip} onLoadDocType={handleDocType}/>
             <Magazzini ip={ip} onLoadMag={handleMag}/>
-            <Commesse ip={ip} onLoadCom={handleCom}/>
+            <Commesse ip={ip} onLoadCom={handleCom} key={commSearch} searchValue={commSearch}/>
             <Attivita ip={ip} onLoadAtt={handleAtt} commessa={formData.commessa} key={commessaKey}/>
             <div className='my-3 d-flex justify-content-between'>
                 {/* <Link to="/homepage"><Button variant='secondary'>Home</Button></Link> */}
@@ -573,15 +583,23 @@ const CreateDocument = () => {
                 <Form.Group controlId="commessa">
                     <Form.Label className='custom-label mt-3'>Commessa</Form.Label>
                     <Form.Control
+                            className={update.updating ? 'update-input' : ''}
+                            placeholder="Cerca..."
+                            type="text"
+                            name="commSearch"
+                            value={commSearch}
+                            onChange={handleChange}
+                    />
+                    <Form.Control
                         required as="select"
                         name="commessa"
                         value={formData.commessa}
                         onChange={handleChange}
                         className={update.updating ? 'update-input' : ''}
                         disabled={isTestataSave} >
-                        <option value=""></option>
+                        <option value=''></option>
                         {coms.map((com) => {
-                            return <option key={com.CNCODCAN} value={com.CNCODCAN}>{com.CNDESCAN}</option>
+                            return <option key={com.CNCODCAN} value={com.CNCODCAN}>{com.CNCODCAN}</option>
                         })}
                     </Form.Control>
                 </Form.Group>

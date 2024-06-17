@@ -9,8 +9,8 @@ import "./document.css"
 
 const Documents = () => {
 
-    const ip="192.168.1.122";
-    // const ip="192.168.5.87";
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
     
     const navigate = useNavigate();
     const azienda = localStorage.getItem("azienda")

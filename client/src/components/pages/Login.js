@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     
-    const ip="192.168.1.122";
-    // const ip="192.168.5.87";
+    // const ip="192.168.1.122";
+    const ip="192.168.5.87";
 
     // Funzione per calcolare l'hash MD5 di una stringa
     // function calculateMD5(inputString) {
